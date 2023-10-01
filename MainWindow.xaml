@@ -1,0 +1,59 @@
+﻿<Window x:Name="SgeWindow"
+        x:Class="SimpleGraphicEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleGraphicEditor"
+        mc:Ignorable="d"       
+        Title="SimpleGraphicEditor" 
+        MinHeight="480" 
+        MinWidth="720" 
+        Width="{Binding ElementName=SgeWindow, Path=MinWidth}"
+        Height="{Binding ElementName=SgeWindow, Path=MinHeight}">
+    <Grid>
+        <!--Табличная разметка верхнего уровня-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!--Верхняя панель с инструментами-->
+        <Border Grid.Row="0" 
+                BorderThickness="0,0,0,2" 
+                BorderBrush="Black" 
+                Background="Gray">
+            <Grid>
+                <!--Табличная разметка панели инструментов-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" Text="Панель инструментов" />
+                
+                <!--Кнопки-->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" >
+                    <Button x:Name="PointButton" 
+                            Content="Точка" 
+                            Style="{StaticResource ToolButton}" 
+                            Click="PointButtonClick"/>
+                    <Button x:Name="LineButton" 
+                            Content="Линия" 
+                            Style="{StaticResource ToolButton}" 
+                            Click="LineButtonClick"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!--Холст для рисования-->
+        <Canvas x:Name ="SgeCanvas" 
+                Grid.Row="1" 
+                MouseLeftButtonDown="SgeCanvasLeftMouseDown"     
+                MouseMove="SgeCanvasMouseMove"
+                MouseLeftButtonUp="SgeCanvasMouseUp"
+                Background="White">
+        </Canvas>
+    </Grid>
+</Window>
