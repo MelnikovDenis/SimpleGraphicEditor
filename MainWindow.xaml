@@ -22,7 +22,8 @@
         <Border Grid.Row="0" 
                 BorderThickness="0,0,0,2" 
                 BorderBrush="Black" 
-                Background="Gray">
+                Background="Gray"
+                Panel.ZIndex="2">
             <Grid>
                 <!--Табличная разметка панели инструментов-->
                 <Grid.ColumnDefinitions>
@@ -43,16 +44,18 @@
                             Content="Линия" 
                             Style="{StaticResource ToolButton}" 
                             Click="LineButtonClick"/>
+                    <Button x:Name="DragButton" 
+                            Content="Перетаскивание" 
+                            Style="{StaticResource ToolButton}" 
+                            Click="DragButtonClick"/>
                 </StackPanel>
             </Grid>
         </Border>
         
         <!--Холст для рисования-->
         <Canvas x:Name ="SgeCanvas" 
-                Grid.Row="1" 
-                MouseLeftButtonDown="SgeCanvasLeftMouseDown"     
-                MouseMove="SgeCanvasMouseMove"
-                MouseLeftButtonUp="SgeCanvasMouseUp"
+                Grid.Row="1"
+                MouseLeftButtonDown="SgeCanvasLeftMouseDown"
                 Background="White">
         </Canvas>
     </Grid>

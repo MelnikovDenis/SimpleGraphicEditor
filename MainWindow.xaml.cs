@@ -1,4 +1,5 @@
 ﻿using SimpleGraphicEditor.Models;
+using SimpleGraphicEditor.Models.Static;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -20,95 +22,78 @@ namespace SimpleGraphicEditor;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private IEnumerable<SgePoint> Points { get; set; } = new List<SgePoint>();
-    private SgePoint? Buffer { get; set; } = null;
-    private bool IsDragging { get; set; } = false;
+    private PointFactory PointFactory { get; set; }
+    private LineFactory LineFactory { get; set; }
+    private DragController DragController { get; set; }
     public enum Action 
     {
         SetSignlePoint,
-        SetLineStartPoint,
-        SetLineEndPoint
+        ChooseLineStartPoint,
+        ChooseLineEndPoint,
+        Drag
     }
     public Action CurrentAction { get; private set; } = Action.SetSignlePoint;
     public MainWindow()
     {
         InitializeComponent();
+        DragController = new DragController(SgeCanvas);
+        PointFactory = new PointFactory(SgeCanvas, DragController);
+        LineFactory = new LineFactory(SgeCanvas);
+
+        var p1 = PointFactory.CreateVisiblePoint(new Point(1, 1));
+        var p2 = PointFactory.CreateVisiblePoint(new Point(2, 2));
+        LineFactory.Buffer = p1;
+        var l1 = LineFactory.CreateLineFromBuffer(p2);
+        p1.SetCoordinates(new Point(400, 400));
+        p2.SetCoordinates(new Point(200, 200));
     }
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {
         CurrentAction = Action.SetSignlePoint;
+        DragController.CanDragging = false;
         eventArgs.Handled = true;
     }
     private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        CurrentAction = Action.SetLineStartPoint;
+        CurrentAction = Action.ChooseLineStartPoint;
+        DragController.CanDragging = false;
+        eventArgs.Handled = true;
+    }
+    private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
+    {
+        CurrentAction = Action.Drag;
+        DragController.CanDragging = true;
         eventArgs.Handled = true;
     }
     private void SgeCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
-    {
-        
+    {        
         switch (CurrentAction)
         {
             case Action.SetSignlePoint:
-                var draggableControl = FromEllipse(eventArgs.OriginalSource);
-                if (draggableControl != null)
-                {
-                    IsDragging = true;
-                    draggableControl.VisiblePoint.CaptureMouse();
-                    eventArgs.Handled = true;
-                    return;
-                }
-                Debug.WriteLine($"CurrentAction: {CurrentAction.ToString()}");
                 Point cursorPosition = eventArgs.GetPosition(SgeCanvas);
-                var point = new SgePoint(cursorPosition.X, cursorPosition.Y, SgeCanvas);
-                Points = Points.Append(point);
-                point.Draw();
+                PointFactory.CreateVisiblePoint(cursorPosition);
+                eventArgs.Handled = true;
                 break;
-            case Action.SetLineStartPoint:
-                Debug.WriteLine($"CurrentAction: {CurrentAction.ToString()}");
-                Buffer = FromEllipse(eventArgs.OriginalSource);
-                Debug.WriteLine($"Buffer: {Buffer?.ToString()}");
-                if (Buffer != null)
-                    CurrentAction = Action.SetLineEndPoint;
-                break;
-            case Action.SetLineEndPoint:
-                Debug.WriteLine($"CurrentAction: {CurrentAction.ToString()}");
-                var endPoint = FromEllipse(eventArgs.OriginalSource);
-                if (Buffer != null && endPoint != null)
+            case Action.ChooseLineStartPoint:
+                var ellipse = eventArgs.OriginalSource as Ellipse;
+                if(ellipse != null)
                 {
-                    var line = new SgeLine(Buffer, endPoint, SgeCanvas);
-                    Buffer = null;
-                    line.Draw();
+                    LineFactory.Buffer = ellipse;
+                    CurrentAction = Action.ChooseLineEndPoint;
                 }
-                CurrentAction = Action.SetLineStartPoint;
+                eventArgs.Handled = true;          
                 break;
-
+            case Action.ChooseLineEndPoint:                
+                ellipse = eventArgs.OriginalSource as Ellipse;
+                if(ellipse != null && ellipse != LineFactory.Buffer)
+                {
+                    LineFactory.CreateLineFromBuffer(ellipse);
+                    CurrentAction = Action.ChooseLineStartPoint;
+                }
+                eventArgs.Handled = true;
+                break;
         }
-        eventArgs.Handled = true;
-    }
-    private void SgeCanvasMouseMove(object sender, MouseEventArgs eventArgs) 
-    {
-        var draggableControl = FromEllipse(eventArgs.OriginalSource);
-
-        if (IsDragging && draggableControl != null)
-        {
-            Point currentPosition = eventArgs.GetPosition(sender as Shape);
-            draggableControl.X = currentPosition.X;
-            draggableControl.Y = currentPosition.Y;
-            eventArgs.Handled = true;
-        }
-    }
-    private void SgeCanvasMouseUp(object sender, MouseButtonEventArgs eventArgs)
-    {
-        IsDragging = false;
-        var draggable = FromEllipse(eventArgs.OriginalSource);
-        draggable?.VisiblePoint.ReleaseMouseCapture();
-        eventArgs.Handled = true;
-    }
-
-    private SgePoint? FromEllipse(object source)
-    {
-        var ellipse = source as Ellipse;
-        return Points.FirstOrDefault(sgep => sgep.VisiblePoint.Equals(ellipse));
-    }
+        
+    }   
+    
 }
