@@ -48,6 +48,11 @@
                             Content="Перетаскивание" 
                             Style="{StaticResource ToolButton}" 
                             Click="DragButtonClick"/>
+                    <Button x:Name="DeleteButton" 
+                            Content="Удаление" 
+                            Style="{StaticResource ToolButton}" 
+                            Click="DeleteButtonClick"/>
+                    
                 </StackPanel>
             </Grid>
         </Border>
@@ -55,7 +60,7 @@
         <!--Холст для рисования-->
         <Canvas x:Name ="SgeCanvas" 
                 Grid.Row="1"
-                MouseLeftButtonDown="SgeCanvasLeftMouseDown"
+                MouseLeftButtonDown="OnCanvasLeftMouseDown"
                 Background="White">
         </Canvas>
     </Grid>

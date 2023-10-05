@@ -3,36 +3,47 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows;
 using SimpleGraphicEditor.Models.Static;
+using SimpleGraphicEditor.Models.EventControllers;
+using System.Windows.Data;
 namespace SimpleGraphicEditor.Models;
 public class PointFactory
-{
-      public static Brush DefaultBrush { get; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-      public static Brush FocusBrush { get; } = new SolidColorBrush(Color.FromRgb(0, 255, 0));
-      public static int DefaultZIndex { get; } = 1;
-      public static double Diameter { get; } = 10d;
-
+{      
       private Canvas TargetCanvas { get; set; }
       private DragController DragController { get; set; }
-      public PointFactory(Canvas targetCanvas, DragController dragController)
+      private FocusController FocusController { get; set; }
+      public PointFactory(Canvas targetCanvas, 
+            DragController dragController, 
+            FocusController focusController)
       {
             TargetCanvas = targetCanvas;
             DragController = dragController;
+            FocusController = focusController;            
       }
       public Ellipse CreateVisiblePoint(Point point)
       {
             var ellipse = new Ellipse()
             {
-                  Fill = DefaultBrush,
-                  Width = Diameter,
-                  Height = Diameter
+                  Fill = DefaultValues.DefaultPointBrush,
+                  Width = DefaultValues.DefualutPointDiameter,
+                  Height = DefaultValues.DefualutPointDiameter
             };
-            Canvas.SetZIndex(ellipse, DefaultZIndex);
+            Canvas.SetZIndex(ellipse, DefaultValues.DefaultPointZIndex);
             ellipse.SetCoordinates(point);
             TargetCanvas.Children.Add(ellipse);
-            ellipse.AllowDrop = true;
             ellipse.MouseMove += DragController.OnMouseMove;
             ellipse.MouseLeftButtonDown += DragController.OnMouseLeftButtonDown;
-            ellipse.MouseLeftButtonUp += DragController.OnMouseLeftButtonUp;            
+            ellipse.MouseLeftButtonUp += DragController.OnMouseLeftButtonUp;
+            ellipse.MouseEnter += FocusController.OnMouseEnter;
+            ellipse.MouseLeave += FocusController.OnMouseLeave;
             return ellipse;            
-      }      
+      }
+      public void Remove(Ellipse ellipse)
+      {
+            ellipse.MouseMove -= DragController.OnMouseMove;
+            ellipse.MouseLeftButtonDown -= DragController.OnMouseLeftButtonDown;
+            ellipse.MouseLeftButtonUp -= DragController.OnMouseLeftButtonUp;
+            ellipse.MouseEnter -= FocusController.OnMouseEnter;
+            ellipse.MouseLeave -= FocusController.OnMouseLeave;
+            TargetCanvas.Children.Remove(ellipse);
+      }
 }

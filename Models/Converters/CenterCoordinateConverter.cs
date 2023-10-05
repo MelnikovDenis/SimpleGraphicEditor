@@ -10,7 +10,6 @@ public class CenterCoordinateConverter: IValueConverter
                   throw new InvalidCastException("Конвертируемое значение и параметр не являются типом double.");
             return (double)value + (double)parameter / 2d; 
       }
-
       public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
       {
             if(value is not double || parameter is not double)
