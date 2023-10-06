@@ -4,18 +4,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleGraphicEditor"
+        xmlns:local="clr-namespace:SimpleGraphicEditor.Models"
         mc:Ignorable="d"       
         Title="SimpleGraphicEditor" 
         MinHeight="480" 
         MinWidth="720" 
         Width="{Binding ElementName=SgeWindow, Path=MinWidth}"
         Height="{Binding ElementName=SgeWindow, Path=MinHeight}">
+    <Window.Resources>
+        <local:SgeStatus x:Key="Status" />
+    </Window.Resources>
     <Grid>
         <!--Табличная разметка верхнего уровня-->
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!--Верхняя панель с инструментами-->
@@ -63,5 +67,16 @@
                 MouseLeftButtonDown="OnCanvasLeftMouseDown"
                 Background="White">
         </Canvas>
+
+        <Border Grid.Row="2"
+                BorderThickness="0,2,0,0" 
+                BorderBrush="Black" 
+                Background="Gray"
+                Panel.ZIndex="2" 
+                >
+            <TextBlock  x:Name="StatusTextBlock" 
+                        Text="{Binding Source={StaticResource Status}, Path=Message}" /> 
+        </Border>
+        
     </Grid>
 </Window>

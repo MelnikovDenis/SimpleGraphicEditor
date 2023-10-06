@@ -9,8 +9,8 @@ namespace SimpleGraphicEditor.Models;
 public class PointFactory
 {      
       private Canvas TargetCanvas { get; set; }
-      private DragController DragController { get; set; }
-      private FocusController FocusController { get; set; }
+      public DragController DragController { get; set; }
+      public FocusController FocusController { get; set; }
       public PointFactory(Canvas targetCanvas, 
             DragController dragController, 
             FocusController focusController)

@@ -25,113 +25,99 @@ public partial class MainWindow : Window
 {
     private PointFactory PointFactory { get; set; }
     private LineFactory LineFactory { get; set; }
-    private DragController DragController { get; set; }
-    private FocusController PointFocusController { get; set; }
-    private FocusController LineFocusController { get; set; }
-    public enum Action 
-    {
-        SetSignlePoint,
-        ChooseLineStartPoint,
-        ChooseLineEndPoint,
-        Drag,
-        Delete
-    }
-    public Action CurrentAction { get; private set; } = Action.SetSignlePoint;
+    private SgeStatus Status { get; set; }
     public MainWindow()
     {
         InitializeComponent();
-
-        DragController = new DragController(SgeCanvas);
-        PointFocusController = new FocusController(
-            DefaultValues.DefaultPointBrush, 
-            DefaultValues.DefaultPointBrush,
-            DefaultValues.FocusBrush,
-            DefaultValues.FocusBrush);
-        LineFocusController = new FocusController(
-            DefaultValues.DefaultLineBrush, 
-            DefaultValues.DefaultLineBrush,
-            DefaultValues.FocusBrush,
-            DefaultValues.FocusBrush);
+        Status = (SgeStatus)this.Resources["Status"];
         PointFactory = new PointFactory(
-            SgeCanvas, 
-            DragController, 
-            PointFocusController);
+            SgeCanvas,
+            new DragController(SgeCanvas), 
+            new FocusController(DefaultValues.DefaultPointBrush, 
+                DefaultValues.DefaultPointBrush,
+                DefaultValues.FocusBrush,
+                DefaultValues.FocusBrush)
+        );
         LineFactory = new LineFactory(
             SgeCanvas, 
             //DragController,
-            LineFocusController);
+            new FocusController(DefaultValues.DefaultLineBrush, 
+                DefaultValues.DefaultLineBrush,
+                DefaultValues.FocusBrush,
+                DefaultValues.FocusBrush)
+            );
     }
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        CurrentAction = Action.SetSignlePoint;
+        Status.CurrentAction = SgeStatus.Action.SetSignlePoint;
 
-        DragController.CanDragging = false;
+        PointFactory.DragController.CanDragging = false;
 
-        PointFocusController.CanFocus = false;
-        LineFocusController.CanFocus = false;
+        PointFactory.FocusController.CanFocus = false;
+        LineFactory.FocusController.CanFocus = false;
 
         eventArgs.Handled = true;
     }
     private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        CurrentAction = Action.ChooseLineStartPoint;
+        Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint;
 
-        DragController.CanDragging = false;
+        PointFactory.DragController.CanDragging = false;
 
-        PointFocusController.CanFocus = true;
-        LineFocusController.CanFocus = false;
+        PointFactory.FocusController.CanFocus = true;
+        LineFactory.FocusController.CanFocus = false;
 
         eventArgs.Handled = true;
     }
     private void DeleteButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        CurrentAction = Action.Delete;
+        Status.CurrentAction = SgeStatus.Action.Delete;
 
-        DragController.CanDragging = false;
+        PointFactory.DragController.CanDragging = false;
 
-        PointFocusController.CanFocus = false;
-        LineFocusController.CanFocus = true;
+        PointFactory.FocusController.CanFocus = true;
+        LineFactory.FocusController.CanFocus = true;
 
         eventArgs.Handled = true;
     }
     private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        CurrentAction = Action.Drag;
+        Status.CurrentAction = SgeStatus.Action.Drag;
+        
+        PointFactory.DragController.CanDragging = true;
 
-        DragController.CanDragging = true;
-
-        PointFocusController.CanFocus = true;
-        LineFocusController.CanFocus = false;
+        PointFactory.FocusController.CanFocus = true;
+        LineFactory.FocusController.CanFocus = false;
 
         eventArgs.Handled = true;
     }
     private void OnCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
     {        
-        switch (CurrentAction)
+        switch (Status.CurrentAction)
         {
-            case Action.Drag:
+            case SgeStatus.Action.Drag:
                 return;
-            case Action.SetSignlePoint:
+            case SgeStatus.Action.SetSignlePoint:
                 Point cursorPosition = eventArgs.GetPosition(SgeCanvas);
                 PointFactory.CreateVisiblePoint(cursorPosition);
                 break;
-            case Action.ChooseLineStartPoint:
+            case SgeStatus.Action.ChooseLineStartPoint:
                 var ellipse = eventArgs.OriginalSource as Ellipse;
                 if(ellipse != null)
                 {
                     LineFactory.Buffer = ellipse;
-                    CurrentAction = Action.ChooseLineEndPoint;
+                    Status.CurrentAction = SgeStatus.Action.ChooseLineEndPoint;
                 }         
                 break;
-            case Action.ChooseLineEndPoint:                
+            case SgeStatus.Action.ChooseLineEndPoint:                
                 ellipse = eventArgs.OriginalSource as Ellipse;
                 if(ellipse != null && ellipse != LineFactory.Buffer)
                 {                    
                     LineFactory.CreateLineFromBuffer(ellipse);
-                    CurrentAction = Action.ChooseLineStartPoint;
+                    Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint;
                 }               
                 break;
-            case Action.Delete:
+            case SgeStatus.Action.Delete:
                 var line = eventArgs.OriginalSource as Line;
                 if(line != null)
                     LineFactory.Remove(line);

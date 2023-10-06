@@ -11,7 +11,7 @@ namespace SimpleGraphicEditor.Models;
 public class LineFactory
 {     
       private Canvas TargetCanvas { get; set; }
-      private FocusController FocusController { get; set; }
+      public FocusController FocusController { get; set; }
       //private DragController DragController { get; set; }
       public Ellipse? Buffer { get; set; } = null;
       public LineFactory(Canvas targetCanvas,
