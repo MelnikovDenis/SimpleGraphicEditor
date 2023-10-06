@@ -46,14 +46,12 @@ public partial class MainWindow : Window
             DefaultValues.DefaultPointBrush, 
             DefaultValues.DefaultPointBrush,
             DefaultValues.FocusBrush,
-            DefaultValues.FocusBrush,
-            DefaultValues.FocusScaleCoefficient);
+            DefaultValues.FocusBrush);
         LineFocusController = new FocusController(
             DefaultValues.DefaultLineBrush, 
             DefaultValues.DefaultLineBrush,
             DefaultValues.FocusBrush,
-            DefaultValues.FocusBrush,
-            DefaultValues.FocusScaleCoefficient);
+            DefaultValues.FocusBrush);
         PointFactory = new PointFactory(
             SgeCanvas, 
             DragController, 
@@ -62,13 +60,6 @@ public partial class MainWindow : Window
             SgeCanvas, 
             //DragController,
             LineFocusController);
-
-        var p1 = PointFactory.CreateVisiblePoint(new Point(1, 1));
-        var p2 = PointFactory.CreateVisiblePoint(new Point(2, 2));
-        LineFactory.Buffer = p1;
-        var l1 = LineFactory.CreateLineFromBuffer(p2);
-        p1.SetCoordinates(new Point(400, 400));
-        p2.SetCoordinates(new Point(200, 200));
     }
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {

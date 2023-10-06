@@ -29,7 +29,7 @@ public class DragController
             if(CanDragging && eventArgs.LeftButton == MouseButtonState.Pressed && draggable != null && IsDragging)
             {                                    
                   var dropPosition = eventArgs.GetPosition(TargetCanvas);         
-                  draggable.SetCoordinates(dropPosition);   
+                  draggable.SetCoordinates(dropPosition);
                   eventArgs.Handled = true;
             } 
       }
