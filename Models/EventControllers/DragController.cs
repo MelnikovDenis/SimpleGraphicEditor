@@ -3,6 +3,7 @@ using SimpleGraphicEditor.Models.Static;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using System.Diagnostics;
 namespace SimpleGraphicEditor.Models.EventControllers;
 public class DragController
 {
@@ -28,9 +29,17 @@ public class DragController
             var draggable = sender as Shape;
             if(CanDragging && eventArgs.LeftButton == MouseButtonState.Pressed && draggable != null && IsDragging)
             {                                    
-                  var dropPosition = eventArgs.GetPosition(TargetCanvas);         
-                  draggable.SetCoordinates(dropPosition);
-                  eventArgs.Handled = true;
+                  var dropPosition = eventArgs.GetPosition(TargetCanvas);
+                  if(dropPosition.X < 0)
+                        dropPosition.X = 0;
+                  if(dropPosition.Y < 0)
+                        dropPosition.Y = 0;
+                  if(dropPosition.X > TargetCanvas.ActualWidth)
+                        dropPosition.X = TargetCanvas.ActualWidth;
+                  if(dropPosition.Y > TargetCanvas.ActualHeight)
+                        dropPosition.Y = TargetCanvas.ActualHeight;
+                  draggable.SetCoordinates(dropPosition);              
+                  eventArgs.Handled = true;                                
             } 
       }
       public void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs eventArgs)
