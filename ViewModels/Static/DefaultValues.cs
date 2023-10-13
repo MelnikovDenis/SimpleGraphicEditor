@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace SimpleGraphicEditor.Models.Static;
+namespace SimpleGraphicEditor.ViewModels.Static;
 public static class DefaultValues
 {
       public static Brush FocusBrush { get; } = new SolidColorBrush(Color.FromRgb(0, 255, 0));
