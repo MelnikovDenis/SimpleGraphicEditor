@@ -1,9 +1,11 @@
-﻿using System.ComponentModel;
+﻿using SimpleGraphicEditor.Models.Abstractions;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace SimpleGraphicEditor.Models;
 
-public class SgeLine
+public class SgeLine : IMoveable
 {
     public SgePoint Point1 { get; }
     public SgePoint Point2 { get; }
@@ -23,4 +25,10 @@ public class SgeLine
 
     public override int GetHashCode()
         => (Point1.GetHashCode() ^ Point2.GetHashCode());
+
+    public void Move(Point delta)
+    {       
+        Point1.Move(delta);
+        Point2.Move(delta);
+    }
 }

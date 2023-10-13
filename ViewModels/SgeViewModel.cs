@@ -22,7 +22,16 @@ public class SgeViewModel
     {
         TargetCanvas = targetCanvas;
 
-        var pointDragController = new DragController(TargetCanvas, (sender, newPosition) => Points[(sender as Ellipse)!].Move(newPosition));
+        var pointDragController = new DragController(TargetCanvas, (sender, newPosition) => 
+        {
+            var point = Points[(sender as Ellipse)!];
+            point.Move(new Point(newPosition.X - point.X, newPosition.Y - point.Y));
+        });
+        var lineDragController = new DragController(TargetCanvas, (sender, newPosition) => 
+        {
+            var line = Lines[(sender as Line)!];
+            line.Move(new Point(newPosition.X - (line.Point1.X + line.Point2.X) / 2, newPosition.Y - (line.Point1.Y + line.Point2.Y) / 2));
+        });
 
         var pointFocusController = new FocusController(DefaultValues.DefaultPointBrush,
                 DefaultValues.DefaultPointBrush,
@@ -34,7 +43,7 @@ public class SgeViewModel
                 DefaultValues.FocusBrush);
 
         PointViewModel = new PointViewModel(pointFocusController, pointDragController);
-        LineViewModel = new LineViewModel(lineFocusController);
+        LineViewModel = new LineViewModel(lineFocusController, lineDragController);
     }
     public Ellipse? EllipseBuffer { get; set; } = null;
     public void CreateLineFromBuffer(Ellipse endPoint) 

@@ -10,9 +10,11 @@ namespace SimpleGraphicEditor.ViewModels;
 public class LineViewModel
 {          
         public FocusController FocusController { get; set; }
-        public LineViewModel(FocusController focusController)
+        public DragController DragController { get; set; }
+        public LineViewModel(FocusController focusController, DragController dragController)
         {
             FocusController = focusController;
+            DragController = dragController;
         }
         public (Line, SgeLine) CreateLine(SgePoint point1, SgePoint point2)
         {
@@ -55,6 +57,9 @@ public class LineViewModel
                 Mode = BindingMode.OneWay
             });
 
+            line.MouseMove += DragController.OnMouseMove;
+            line.MouseLeftButtonDown += DragController.OnMouseLeftButtonDown;
+            line.MouseLeftButtonUp += DragController.OnMouseLeftButtonUp;
             line.MouseEnter += FocusController.OnMouseEnter;
             line.MouseLeave += FocusController.OnMouseLeave;
             return line;

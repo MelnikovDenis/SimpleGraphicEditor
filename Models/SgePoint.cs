@@ -41,10 +41,10 @@ public class SgePoint : INotifyPropertyChanged, IMoveable
         X = point.X;
         Y = point.Y;
     }
-    public void Move(Point newPosition) 
+    public void Move(Point delta) 
     {
-        X = newPosition.X;
-        Y = newPosition.Y;
+        X = X + delta.X;
+        Y = Y + delta.Y;
     }
     public event PropertyChangedEventHandler? PropertyChanged;
     public void OnPropertyChanged([CallerMemberName] string prop = "") =>

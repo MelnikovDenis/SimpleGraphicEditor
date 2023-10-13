@@ -24,7 +24,7 @@ public partial class MainWindow : Window
         Status.CurrentAction = SgeStatus.Action.SetSignlePoint;
 
         ViewModel.PointViewModel.DragController.CanDragging = false;
-
+        ViewModel.LineViewModel.DragController.CanDragging = false;
         ViewModel.PointViewModel.FocusController.CanFocus = false;
         ViewModel.LineViewModel.FocusController.CanFocus = false;
 
@@ -35,7 +35,7 @@ public partial class MainWindow : Window
         Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint;
 
         ViewModel.PointViewModel.DragController.CanDragging = false;
-
+        ViewModel.LineViewModel.DragController.CanDragging = false;
         ViewModel.PointViewModel.FocusController.CanFocus = true;
         ViewModel.LineViewModel.FocusController.CanFocus = false;
 
@@ -46,7 +46,7 @@ public partial class MainWindow : Window
         Status.CurrentAction = SgeStatus.Action.Delete;
 
         ViewModel.PointViewModel.DragController.CanDragging = false;
-
+        ViewModel.LineViewModel.DragController.CanDragging = false;
         ViewModel.PointViewModel.FocusController.CanFocus = true;
         ViewModel.LineViewModel.FocusController.CanFocus = true;
 
@@ -57,9 +57,9 @@ public partial class MainWindow : Window
         Status.CurrentAction = SgeStatus.Action.Drag;
 
         ViewModel.PointViewModel.DragController.CanDragging = true;
-
+        ViewModel.LineViewModel.DragController.CanDragging = true;
         ViewModel.PointViewModel.FocusController.CanFocus = true;
-        ViewModel.LineViewModel.FocusController.CanFocus = false;
+        ViewModel.LineViewModel.FocusController.CanFocus = true;
 
         eventArgs.Handled = true;
     }
