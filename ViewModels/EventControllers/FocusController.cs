@@ -6,17 +6,14 @@ namespace SimpleGraphicEditor.ViewModels.EventControllers;
 public class FocusController
 {
     public bool CanFocus { get; set; } = false;
-    public Brush DefaultFillBrush { get; set; }
-    public Brush DefaultStrokeBrush { get; set; }
+    public Brush? DefaultFillBrush { get; set; } = null;
+    public Brush? DefaultStrokeBrush { get; set; } = null;
     public Brush FocusFillBrush { get; set; }
     public Brush FocusStrokeBrush { get; set; }
-    public FocusController(Brush defaultFillBrush,
-          Brush defaultStrokeBrush,
+    public FocusController(
           Brush focusFillBrush,
           Brush focusStrokeBrush)
     {
-        DefaultFillBrush = defaultFillBrush;
-        DefaultStrokeBrush = defaultStrokeBrush;
         FocusFillBrush = focusFillBrush;
         FocusStrokeBrush = focusStrokeBrush;
     }
@@ -24,6 +21,8 @@ public class FocusController
     {
         if (CanFocus && sender is Shape focusable)
         {
+            DefaultFillBrush = focusable.Fill;
+            DefaultStrokeBrush = focusable.Stroke;
             focusable.Fill = FocusFillBrush;
             focusable.Stroke = FocusStrokeBrush;
             eventArgs.Handled = true;
@@ -35,6 +34,8 @@ public class FocusController
         {
             focusable.Fill = DefaultFillBrush;
             focusable.Stroke = DefaultStrokeBrush;
+            DefaultFillBrush = null;
+            DefaultStrokeBrush = null;
             eventArgs.Handled = true;
         }
     }

@@ -11,7 +11,7 @@ public class SgePoint : INotifyPropertyChanged, IMoveable
 {
     private double x = 0d;
     private double y = 0d;
-    public HashSet<SgeLine> AttachedLines { get; } = new HashSet<SgeLine>();
+    public LinkedList<SgeLine> AttachedLines { get; } = new LinkedList<SgeLine>();
     public double X 
     {
         get 

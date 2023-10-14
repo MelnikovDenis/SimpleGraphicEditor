@@ -34,7 +34,7 @@ public class DragController
                 IsDragging &&
                 LastTouch != null &&
                 eventArgs.LeftButton == MouseButtonState.Pressed &&
-                sender is Shape draggable                
+                sender is Shape draggable           
             )
             {
                 var dropPosition = eventArgs.GetPosition(TargetCanvas);                

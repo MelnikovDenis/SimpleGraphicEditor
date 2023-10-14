@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Data;
+using System.Diagnostics;
 
 namespace SimpleGraphicEditor.ViewModels;
 
@@ -25,14 +26,8 @@ public class SgeViewModel
         var pointDragController = new DragController(TargetCanvas, PointMove);
         var lineDragController = new DragController(TargetCanvas, LineMove); 
 
-        var pointFocusController = new FocusController(DefaultValues.DefaultPointBrush,
-                DefaultValues.DefaultPointBrush,
-                DefaultValues.FocusBrush,
-                DefaultValues.FocusBrush);
-        var lineFocusController = new FocusController(DefaultValues.DefaultLineBrush,
-                DefaultValues.DefaultLineBrush,
-                DefaultValues.FocusBrush,
-                DefaultValues.FocusBrush);
+        var pointFocusController = new FocusController(DefaultValues.FocusBrush, DefaultValues.FocusBrush);
+        var lineFocusController = new FocusController(DefaultValues.FocusBrush, DefaultValues.FocusBrush);
 
         PointViewModel = new PointViewModel(pointFocusController, pointDragController);
         LineViewModel = new LineViewModel(lineFocusController, lineDragController);
@@ -62,21 +57,27 @@ public class SgeViewModel
         ellipse.MouseLeftButtonUp -= PointViewModel.DragController.OnMouseLeftButtonUp;
         ellipse.MouseEnter -= PointViewModel.FocusController.OnMouseEnter;
         ellipse.MouseLeave -= PointViewModel.FocusController.OnMouseLeave;
+
         var sgePoint = Points[ellipse];
         BindingOperations.ClearAllBindings(ellipse);
         Points.Remove(ellipse);
         TargetCanvas.Children.Remove(ellipse);
-
         var lines = from kvp in Lines where sgePoint.AttachedLines.Contains(kvp.Value) select kvp.Key;
         foreach (var line in lines) 
-        {
             RemoveLine(line);
-        }            
     }
     public void RemoveLine(Line line)
     {
         line.MouseEnter -= LineViewModel.FocusController.OnMouseEnter;
         line.MouseLeave -= LineViewModel.FocusController.OnMouseLeave;
+        line.MouseMove -= PointViewModel.DragController.OnMouseMove;
+        line.MouseLeftButtonDown -= PointViewModel.DragController.OnMouseLeftButtonDown;
+        line.MouseLeftButtonUp -= PointViewModel.DragController.OnMouseLeftButtonUp;
+
+        var sgeLine = Lines[line];
+        sgeLine.Point1.AttachedLines.Remove(sgeLine);
+        sgeLine.Point2.AttachedLines.Remove(sgeLine);
+
         BindingOperations.ClearAllBindings(line);
         Lines.Remove(line);
         TargetCanvas.Children.Remove(line);
