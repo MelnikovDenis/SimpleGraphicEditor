@@ -22,16 +22,8 @@ public class SgeViewModel
     {
         TargetCanvas = targetCanvas;
 
-        var pointDragController = new DragController(TargetCanvas, (sender, newPosition) => 
-        {
-            var point = Points[(sender as Ellipse)!];
-            point.Move(new Point(newPosition.X - point.X, newPosition.Y - point.Y));
-        });
-        var lineDragController = new DragController(TargetCanvas, (sender, newPosition) => 
-        {
-            var line = Lines[(sender as Line)!];
-            line.Move(new Point(newPosition.X - (line.Point1.X + line.Point2.X) / 2, newPosition.Y - (line.Point1.Y + line.Point2.Y) / 2));
-        });
+        var pointDragController = new DragController(TargetCanvas, PointMove);
+        var lineDragController = new DragController(TargetCanvas, LineMove); 
 
         var pointFocusController = new FocusController(DefaultValues.DefaultPointBrush,
                 DefaultValues.DefaultPointBrush,
@@ -88,5 +80,27 @@ public class SgeViewModel
         BindingOperations.ClearAllBindings(line);
         Lines.Remove(line);
         TargetCanvas.Children.Remove(line);
+    }
+    public void PointMove(object sender, Point delta) 
+    {
+        var point = Points[(sender as Ellipse)!];
+        if (point.X + delta.X > TargetCanvas.ActualWidth || point.X + delta.X < 0d)
+            delta.X = 0d;
+        if (point.Y + delta.Y > TargetCanvas.ActualHeight || point.Y + delta.Y < 0d)
+            delta.Y = 0d;
+        point.Move(delta);
+    }
+    public void LineMove(object sender, Point delta) 
+    {
+        var line = Lines[(sender as Line)!];
+        if (line.Point1.X + delta.X > TargetCanvas.ActualWidth || line.Point1.X + delta.X < 0d)
+            delta.X = 0d;
+        if (line.Point1.Y + delta.Y > TargetCanvas.ActualHeight || line.Point1.Y + delta.Y < 0d)
+            delta.Y = 0d;
+        if (line.Point2.X + delta.X > TargetCanvas.ActualWidth || line.Point2.X + delta.X < 0d)
+            delta.X = 0d;
+        if (line.Point2.Y + delta.Y > TargetCanvas.ActualHeight || line.Point2.Y + delta.Y < 0d)
+            delta.Y = 0d;
+        line.Move(delta);
     }
 }

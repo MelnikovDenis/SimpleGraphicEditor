@@ -9,8 +9,8 @@ namespace SimpleGraphicEditor.Models;
 
 public class SgePoint : INotifyPropertyChanged, IMoveable
 {
-    private double x;
-    private double y;
+    private double x = 0d;
+    private double y = 0d;
     public HashSet<SgeLine> AttachedLines { get; } = new HashSet<SgeLine>();
     public double X 
     {
@@ -43,8 +43,8 @@ public class SgePoint : INotifyPropertyChanged, IMoveable
     }
     public void Move(Point delta) 
     {
-        X = X + delta.X;
-        Y = Y + delta.Y;
+        X += delta.X;
+        Y += delta.Y;
     }
     public event PropertyChangedEventHandler? PropertyChanged;
     public void OnPropertyChanged([CallerMemberName] string prop = "") =>
@@ -57,4 +57,6 @@ public class SgePoint : INotifyPropertyChanged, IMoveable
 
     public override int GetHashCode() =>
        HashCode.Combine(x, y);
+
+    
 }
