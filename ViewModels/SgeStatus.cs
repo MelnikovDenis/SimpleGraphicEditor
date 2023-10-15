@@ -10,7 +10,8 @@ public class SgeStatus : INotifyPropertyChanged
             "Первая точка линии",
             "Вторая точка линии",
             "Перемещение",
-            "Удаление"
+            "Удаление",
+            "Группировка точек"
     };
     private static Action DefaultAction { get; } = Action.SetSignlePoint;
     public enum Action
@@ -19,7 +20,8 @@ public class SgeStatus : INotifyPropertyChanged
         ChooseLineStartPoint,
         ChooseLineEndPoint,
         Drag,
-        Delete
+        Delete,
+        Grouping
     }
     private Action currentAction = DefaultAction;
     public Action CurrentAction

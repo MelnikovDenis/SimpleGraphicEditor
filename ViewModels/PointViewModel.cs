@@ -1,63 +1,52 @@
-using System.Windows.Controls;
-using System.Windows.Shapes;
-using System.Windows;
-using System.Windows.Data;
-using System.Collections.Generic;
-using SimpleGraphicEditor.Models;
-using SimpleGraphicEditor.ViewModels.Converters;
-using SimpleGraphicEditor.ViewModels.EventControllers;
+﻿using SimpleGraphicEditor.Models;
 using SimpleGraphicEditor.ViewModels.Static;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Ink;
+using System.Windows.Shapes;
 
 namespace SimpleGraphicEditor.ViewModels;
-public class PointViewModel
-{   
-        public FocusController FocusController { get; set; }
-        public DragController DragController { get; set; }
-        public PointViewModel(FocusController focusController, DragController dragController)
-        {
-            FocusController = focusController;
-            DragController = dragController;
-        }
-        public (Ellipse, SgePoint) CreatePoint(Point point)
-        {
-                var sgePoint = new SgePoint(point);
 
-                var ellipse = CreateEllipse(sgePoint);
+public partial class SgeViewModel
+{
+    public PointFactory PointFactory { get; set; }
+    private Dictionary<Ellipse, SgePoint> Points { get; } = new Dictionary<Ellipse, SgePoint>();    
+    public void CreatePoint(Point position)
+    {
+        var point = PointFactory.CreatePoint(position);
+        Points.Add(point.Item1, point.Item2);
+        TargetCanvas.Children.Add(point.Item1);
+    }
+    public void RemovePoint(Ellipse ellipse)
+    {
+        ellipse.MouseMove -= PointFactory.DragController.OnMouseMove;
+        ellipse.MouseLeftButtonDown -= PointFactory.DragController.OnMouseLeftButtonDown;
+        ellipse.MouseLeftButtonUp -= PointFactory.DragController.OnMouseLeftButtonUp;
+        ellipse.MouseEnter -= PointFactory.FocusController.OnMouseEnter;
+        ellipse.MouseLeave -= PointFactory.FocusController.OnMouseLeave;
 
-                return (ellipse, sgePoint);
-        }
-        private Ellipse CreateEllipse(SgePoint sgePoint) 
-        {
-            var ellipse = new Ellipse()
-            {
-                Fill = DefaultValues.DefaultPointBrush,
-                Width = DefaultValues.DefualutPointDiameter,
-                Height = DefaultValues.DefualutPointDiameter
-            };
-
-            Canvas.SetZIndex(ellipse, DefaultValues.DefaultPointZIndex);
-            ellipse.SetBinding(Canvas.LeftProperty, new Binding()
-            {
-                Source = sgePoint,
-                Path = new PropertyPath(nameof(sgePoint.X)),
-                Converter = new CenterCoordinateConverter(),
-                ConverterParameter = ellipse.Width,
-                Mode = BindingMode.OneWay
-            });
-            ellipse.SetBinding(Canvas.TopProperty, new Binding()
-            {
-                Source = sgePoint,
-                Path = new PropertyPath(nameof(sgePoint.Y)),
-                Converter = new CenterCoordinateConverter(),
-                ConverterParameter = ellipse.Height,
-                Mode = BindingMode.OneWay
-            });
-
-            ellipse.MouseMove += DragController.OnMouseMove;
-            ellipse.MouseLeftButtonDown += DragController.OnMouseLeftButtonDown;
-            ellipse.MouseLeftButtonUp += DragController.OnMouseLeftButtonUp;
-            ellipse.MouseEnter += FocusController.OnMouseEnter;
-            ellipse.MouseLeave += FocusController.OnMouseLeave;
-            return ellipse;
-        }
+        var sgePoint = Points[ellipse];
+        BindingOperations.ClearAllBindings(ellipse);
+        Points.Remove(ellipse);
+        TargetCanvas.Children.Remove(ellipse);
+        var lines = from kvp in Lines where sgePoint.AttachedLines.Contains(kvp.Value) select kvp.Key;
+        foreach (var line in lines)
+            RemoveLine(line);
+    }
+    public void PointMove(object sender, Point delta)
+    {
+        var point = Points[(sender as Ellipse)!];
+        LimitDelta(point, ref delta);
+        point.Move(delta);
+    }
+    private void LimitDelta(SgePoint point, ref Point delta)
+    {
+        if (point.X + delta.X > TargetCanvas.ActualWidth || point.X + delta.X < 0d)
+            delta.X = 0d;
+        if (point.Y + delta.Y > TargetCanvas.ActualHeight || point.Y + delta.Y < 0d)
+            delta.Y = 0d;
+    }
 }

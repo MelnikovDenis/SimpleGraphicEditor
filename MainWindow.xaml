@@ -27,7 +27,7 @@
                 BorderThickness="0,0,0,2" 
                 BorderBrush="Black" 
                 Background="Gray"
-                Panel.ZIndex="2">
+                Panel.ZIndex="3">
             <Grid>
                 <!--Табличная разметка панели инструментов-->
                 <Grid.ColumnDefinitions>
@@ -36,7 +36,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Column="0" Text="Панель инструментов" />
+                <TextBlock Grid.Column="0" Text="Панель инструментов" VerticalAlignment="Center" />
                 
                 <!--Кнопки-->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" >
@@ -56,6 +56,10 @@
                             Content="Удаление" 
                             Style="{StaticResource ToolButton}" 
                             Click="DeleteButtonClick"/>
+                    <Button x:Name="GroupingButton" 
+                            Content="Группировка" 
+                            Style="{StaticResource ToolButton}" 
+                            Click="GroupingButtonClick"/>
                     
                 </StackPanel>
             </Grid>
@@ -65,6 +69,7 @@
         <Canvas x:Name ="SgeCanvas" 
                 Grid.Row="1"
                 MouseLeftButtonDown="OnCanvasLeftMouseDown"
+                MouseRightButtonDown="OnCanvasRightMouseDown"
                 Background="White">
         </Canvas>
 
@@ -72,7 +77,7 @@
                 BorderThickness="0,2,0,0" 
                 BorderBrush="Black" 
                 Background="Gray"
-                Panel.ZIndex="2" 
+                Panel.ZIndex="3" 
                 >
             <TextBlock  x:Name="StatusTextBlock" 
                         Text="{Binding Source={StaticResource Status}, Path=Message}" /> 

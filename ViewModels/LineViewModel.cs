@@ -1,67 +1,49 @@
+﻿using SimpleGraphicEditor.Models;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Shapes;
-using SimpleGraphicEditor.Models;
-using System.Collections.Generic;
-using SimpleGraphicEditor.ViewModels.EventControllers;
-using SimpleGraphicEditor.ViewModels.Static;
 
 namespace SimpleGraphicEditor.ViewModels;
-public class LineViewModel
-{          
-        public FocusController FocusController { get; set; }
-        public DragController DragController { get; set; }
-        public LineViewModel(FocusController focusController, DragController dragController)
-        {
-            FocusController = focusController;
-            DragController = dragController;
-        }
-        public (Line, SgeLine) CreateLine(SgePoint point1, SgePoint point2)
-        {
-            var sgeLine = new SgeLine(point1, point2);
 
-            var line = CreateLine(sgeLine);
+public partial class SgeViewModel
+{
+    public LineFactory LineFactory { get; set; }
+    private Dictionary<Line, SgeLine> Lines { get; } = new Dictionary<Line, SgeLine>();
+    public Ellipse? EllipseBuffer { get; set; } = null;
+    public void CreateLineFromBuffer(Ellipse endPoint)
+    {
+        if (EllipseBuffer == null)
+            throw new NullReferenceException("Стартовая точка должна быть указана.");
+        var point1 = Points[EllipseBuffer];
+        var point2 = Points[endPoint];
+        var line = LineFactory.CreateLine(point1, point2);
+        Lines.Add(line.Item1, line.Item2);
+        TargetCanvas.Children.Add(line.Item1);
+        EllipseBuffer = null;
+    }
+    public void RemoveLine(Line line)
+    {
+        line.MouseEnter -= LineFactory.FocusController.OnMouseEnter;
+        line.MouseLeave -= LineFactory.FocusController.OnMouseLeave;
+        line.MouseMove -= PointFactory.DragController.OnMouseMove;
+        line.MouseLeftButtonDown -= PointFactory.DragController.OnMouseLeftButtonDown;
+        line.MouseLeftButtonUp -= PointFactory.DragController.OnMouseLeftButtonUp;
 
-            return (line, sgeLine);
-        }
-        private Line CreateLine(SgeLine sgeLine) 
-        {
-            var line = new Line()
-            {
-                Stroke = DefaultValues.DefaultLineBrush,
-                StrokeThickness = DefaultValues.DefaultLineThickness,
-            };
+        var sgeLine = Lines[line];
+        sgeLine.Point1.AttachedLines.Remove(sgeLine);
+        sgeLine.Point2.AttachedLines.Remove(sgeLine);
 
-            line.SetBinding(Line.X1Property, new Binding()
-            {
-                Source = sgeLine.Point1,
-                Path = new PropertyPath(nameof(sgeLine.Point1.X)),
-                Mode = BindingMode.OneWay
-            });
-            line.SetBinding(Line.Y1Property, new Binding()
-            {
-                Source = sgeLine.Point1,
-                Path = new PropertyPath(nameof(sgeLine.Point1.Y)),
-                Mode = BindingMode.OneWay
-            });
-            line.SetBinding(Line.X2Property, new Binding()
-            {
-                Source = sgeLine.Point2,
-                Path = new PropertyPath(nameof(sgeLine.Point2.X)),
-                Mode = BindingMode.OneWay
-            });
-            line.SetBinding(Line.Y2Property, new Binding()
-            {
-                Source = sgeLine.Point2,
-                Path = new PropertyPath(nameof(sgeLine.Point2.Y)),
-                Mode = BindingMode.OneWay
-            });
-
-            line.MouseMove += DragController.OnMouseMove;
-            line.MouseLeftButtonDown += DragController.OnMouseLeftButtonDown;
-            line.MouseLeftButtonUp += DragController.OnMouseLeftButtonUp;
-            line.MouseEnter += FocusController.OnMouseEnter;
-            line.MouseLeave += FocusController.OnMouseLeave;
-            return line;
-        }
+        BindingOperations.ClearAllBindings(line);
+        Lines.Remove(line);
+        TargetCanvas.Children.Remove(line);
+    }
+    public void LineMove(object sender, Point delta)
+    {
+        var line = Lines[(sender as Line)!];
+        LimitDelta(line.Point1, ref delta);
+        LimitDelta(line.Point2, ref delta);
+        line.Move(delta);
+    }
 }

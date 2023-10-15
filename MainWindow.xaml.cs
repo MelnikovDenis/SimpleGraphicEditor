@@ -23,10 +23,11 @@ public partial class MainWindow : Window
     {
         Status.CurrentAction = SgeStatus.Action.SetSignlePoint;
 
-        ViewModel.PointViewModel.DragController.CanDragging = false;
-        ViewModel.LineViewModel.DragController.CanDragging = false;
-        ViewModel.PointViewModel.FocusController.CanFocus = false;
-        ViewModel.LineViewModel.FocusController.CanFocus = false;
+        ViewModel.PointFactory.DragController.CanDragging = false;
+        ViewModel.BindPointFactory.DragController.CanDragging = false;
+        ViewModel.LineFactory.DragController.CanDragging = false;
+        ViewModel.PointFactory.FocusController.CanFocus = false;
+        ViewModel.LineFactory.FocusController.CanFocus = false;
 
         eventArgs.Handled = true;
     }
@@ -34,10 +35,11 @@ public partial class MainWindow : Window
     {
         Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint;
 
-        ViewModel.PointViewModel.DragController.CanDragging = false;
-        ViewModel.LineViewModel.DragController.CanDragging = false;
-        ViewModel.PointViewModel.FocusController.CanFocus = true;
-        ViewModel.LineViewModel.FocusController.CanFocus = false;
+        ViewModel.PointFactory.DragController.CanDragging = false;
+        ViewModel.BindPointFactory.DragController.CanDragging = false;
+        ViewModel.LineFactory.DragController.CanDragging = false;
+        ViewModel.PointFactory.FocusController.CanFocus = true;
+        ViewModel.LineFactory.FocusController.CanFocus = false;
 
         eventArgs.Handled = true;
     }
@@ -45,10 +47,11 @@ public partial class MainWindow : Window
     {
         Status.CurrentAction = SgeStatus.Action.Delete;
 
-        ViewModel.PointViewModel.DragController.CanDragging = false;
-        ViewModel.LineViewModel.DragController.CanDragging = false;
-        ViewModel.PointViewModel.FocusController.CanFocus = true;
-        ViewModel.LineViewModel.FocusController.CanFocus = true;
+        ViewModel.PointFactory.DragController.CanDragging = false;
+        ViewModel.BindPointFactory.DragController.CanDragging = false;
+        ViewModel.LineFactory.DragController.CanDragging = false;
+        ViewModel.PointFactory.FocusController.CanFocus = true;
+        ViewModel.LineFactory.FocusController.CanFocus = true;
 
         eventArgs.Handled = true;
     }
@@ -56,15 +59,30 @@ public partial class MainWindow : Window
     {
         Status.CurrentAction = SgeStatus.Action.Drag;
 
-        ViewModel.PointViewModel.DragController.CanDragging = true;
-        ViewModel.LineViewModel.DragController.CanDragging = true;
-        ViewModel.PointViewModel.FocusController.CanFocus = true;
-        ViewModel.LineViewModel.FocusController.CanFocus = true;
+        ViewModel.PointFactory.DragController.CanDragging = true;
+        ViewModel.BindPointFactory.DragController.CanDragging = false;
+        ViewModel.LineFactory.DragController.CanDragging = true;
+        ViewModel.PointFactory.FocusController.CanFocus = true;
+        ViewModel.LineFactory.FocusController.CanFocus = true;
 
         eventArgs.Handled = true;
     }
+    private void GroupingButtonClick(object sender, RoutedEventArgs eventArgs) 
+    {   
+        Status.CurrentAction = SgeStatus.Action.Grouping;
+
+        ViewModel.PointFactory.DragController.CanDragging = false;
+        ViewModel.BindPointFactory.DragController.CanDragging = true;
+        ViewModel.LineFactory.DragController.CanDragging = false;
+        ViewModel.PointFactory.FocusController.CanFocus = true;
+        ViewModel.LineFactory.FocusController.CanFocus = false;
+
+        eventArgs.Handled = true;
+    }    
     private void OnCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
-    {        
+    {
+        var ellipse = eventArgs.OriginalSource as Ellipse;
+        var line = eventArgs.OriginalSource as Line;
         switch (Status.CurrentAction)
         {
             case SgeStatus.Action.Drag:
@@ -74,7 +92,6 @@ public partial class MainWindow : Window
                 ViewModel.CreatePoint(cursorPosition);
                 break;
             case SgeStatus.Action.ChooseLineStartPoint:
-                var ellipse = eventArgs.OriginalSource as Ellipse;
                 if (ellipse != null)
                 {
                     ViewModel.EllipseBuffer = ellipse;
@@ -82,7 +99,6 @@ public partial class MainWindow : Window
                 }
                 break;
             case SgeStatus.Action.ChooseLineEndPoint:
-                ellipse = eventArgs.OriginalSource as Ellipse;
                 if (ellipse != null && ellipse != ViewModel.EllipseBuffer)
                 {
                     ViewModel.CreateLineFromBuffer(ellipse);
@@ -90,13 +106,33 @@ public partial class MainWindow : Window
                 }
                 break;
             case SgeStatus.Action.Delete:
-                if (eventArgs.OriginalSource is Line)
+                if (line != null)
                     ViewModel.RemoveLine((Line)eventArgs.OriginalSource);
-                else if(eventArgs.OriginalSource is Ellipse)
+                else if(ellipse != null)
                     ViewModel.RemovePoint((Ellipse)eventArgs.OriginalSource);
+                break;
+            case SgeStatus.Action.Grouping:
+                if(ellipse != null) 
+                {
+                    ViewModel.AddToGroup(ellipse);
+                }
                 break;
         }
         eventArgs.Handled = true;
-    }   
-    
+    }
+    private void OnCanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs)
+    {
+        var ellipse = eventArgs.OriginalSource as Ellipse;
+        switch (Status.CurrentAction) 
+        {
+            case SgeStatus.Action.Grouping:
+                if (ellipse != null)
+                {
+                    ViewModel.DeleteFromGroup(ellipse);
+                }
+                break;
+        }
+        eventArgs.Handled = true;
+    }
+
 }
