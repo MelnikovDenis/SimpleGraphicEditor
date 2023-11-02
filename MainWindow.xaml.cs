@@ -1,4 +1,6 @@
-﻿using SimpleGraphicEditor.ViewModels;
+﻿using SimpleGraphicEditor.Models;
+using SimpleGraphicEditor.ViewModels;
+using SimpleGraphicEditor.ViewModels.EventControllers;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -11,6 +13,38 @@ namespace SimpleGraphicEditor;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private SgeStatus Status { get; set; }
+    private MyPointsViewModel MyPointsViewModel { get; set; }
+    private ObserverViewModel ObserverViewModel { get; set; }
+    public MainWindow()
+    {
+        InitializeComponent();
+        Status = (SgeStatus)this.Resources["Status"];
+        ObserverViewModel = new ObserverViewModel(SgeCanvas);
+        MyPointsViewModel = new MyPointsViewModel(SgeCanvas, ObserverViewModel.Observer);
+        ObserverViewModel.CanDragging = true;
+        MyPointsViewModel.CanDragging = true;
+        MyPointsViewModel.CanFocus = true;
+        MyPointsViewModel.CreatePoint(0, 0, 0);
+        MyPointsViewModel.CreatePoint(50d, 50d, 50d);
+    }
+    private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
+    { Status.CurrentAction = SgeStatus.Action.SetSignlePoint; eventArgs.Handled = true; }
+    private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
+    { Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint; eventArgs.Handled = true; }
+    private void DeleteButtonClick(object sender, RoutedEventArgs eventArgs)
+    { Status.CurrentAction = SgeStatus.Action.Delete; eventArgs.Handled = true; }
+    private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
+    { Status.CurrentAction = SgeStatus.Action.Drag; eventArgs.Handled = true; }
+    private void GroupingButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { Status.CurrentAction = SgeStatus.Action.Grouping; eventArgs.Handled = true; }
+    private void OnCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
+    {  
+        Point cursorPosition = eventArgs.GetPosition(SgeCanvas);
+        MyPointsViewModel.CreatePoint(cursorPosition.X, cursorPosition.Y, 0d);
+    }
+    private void OnCanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs) { }
+    /*
     private SgeStatus Status { get; set; }
     private SgeViewModel ViewModel { get; set; }
     public MainWindow()
@@ -79,6 +113,7 @@ public partial class MainWindow : Window
 
         eventArgs.Handled = true;
     }    
+    
     private void OnCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
     {
         var ellipse = eventArgs.OriginalSource as Ellipse;
@@ -117,8 +152,7 @@ public partial class MainWindow : Window
                     ViewModel.AddToGroup(ellipse);
                 }
                 break;
-        }
-        eventArgs.Handled = true;
+        }        
     }
     private void OnCanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs)
     {
@@ -133,6 +167,6 @@ public partial class MainWindow : Window
                 break;
         }
         eventArgs.Handled = true;
-    }
+    }*/
 
 }

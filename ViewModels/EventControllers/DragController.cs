@@ -20,7 +20,7 @@ public class DragController
         }
         public void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs eventArgs)
         {
-            if (sender is Shape draggable && CanDragging)
+            if (sender is UIElement draggable && CanDragging)
             {
                 draggable.CaptureMouse();
                 LastTouch = eventArgs.GetPosition(TargetCanvas);
@@ -34,7 +34,7 @@ public class DragController
                 IsDragging &&
                 LastTouch != null &&
                 eventArgs.LeftButton == MouseButtonState.Pressed &&
-                sender is Shape draggable           
+                sender is UIElement draggable           
             )
             {
                 var dropPosition = eventArgs.GetPosition(TargetCanvas);                
@@ -45,7 +45,7 @@ public class DragController
         }
         public void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs eventArgs)
         {
-            if (CanDragging && sender is Shape draggable)
+            if (CanDragging && sender is UIElement draggable)
             {
                 draggable.ReleaseMouseCapture();
                 LastTouch = null;
