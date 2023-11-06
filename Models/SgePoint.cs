@@ -1,62 +1,52 @@
 ﻿using SimpleGraphicEditor.Models.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
+using SimpleGraphicEditor.ViewModels.EventControllers;
+using SimpleGraphicEditor.ViewModels.Static;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Shapes;
 
 namespace SimpleGraphicEditor.Models;
 
-public class SgePoint : INotifyPropertyChanged, IMoveable
+public class SgePoint : VisiblePoint3D
 {
-    private double x = 0d;
-    private double y = 0d;
-    public LinkedList<SgeLine> AttachedLines { get; } = new LinkedList<SgeLine>();
-    public double X 
+    private FocusController FocusController { get; set; }
+    private SelectController SelectController { get; set; }
+    public SgePoint(Canvas targetCanvas, FocusController focusController, SelectController selectController, Observer observer, double realX, double realY, double realZ, double minCoordinate, double maxCoordinate) 
+        : base(realX, realY, realZ, minCoordinate, maxCoordinate, observer, targetCanvas)
     {
-        get 
-        {
-            return x;
-        }
-        set 
-        {
-            x = value;
-            OnPropertyChanged();
-        }
+        SelectController = selectController;
+        FocusController = focusController;
+        Canvas.SetZIndex(VisibleEllipse, DefaultValues.DefaultPointZIndex);
+        VisibleEllipse.MouseEnter += FocusController.MouseEnterHandler;
+        VisibleEllipse.MouseLeave += FocusController.OnMouseLeaveHandler;
+        VisibleEllipse.MouseLeftButtonDown += SelectController.LeftMouseClickHandler;
+        VisibleEllipse.MouseRightButtonDown += SelectController.RightMouseClickHandler;
     }
-    public double Y 
+    protected override Ellipse CreateVisibleEllipse()
     {
-        get
+        var ellipse = new Ellipse()
         {
-            return y;
-        }
-        set
-        {
-            y = value;
-            OnPropertyChanged();
-        }
+                Fill = DefaultValues.DefaultPointBrush,
+                Stroke = DefaultValues.DefaultPointBrush,
+                StrokeThickness = DefaultValues.DefaultPointStrokeThickness,
+                Width = DefaultValues.DefualtPointDiameter,
+                Height = DefaultValues.DefualtPointDiameter 
+        };                          
+        return ellipse;
     }
-    public SgePoint(Point point)
-    {
-        X = point.X;
-        Y = point.Y;
+    public void Remove()
+    {             
+        VisibleEllipse.MouseEnter -= FocusController.MouseEnterHandler;
+        VisibleEllipse.MouseLeave -= FocusController.OnMouseLeaveHandler;
+        VisibleEllipse.MouseLeftButtonDown -= SelectController.LeftMouseClickHandler;
+        VisibleEllipse.MouseRightButtonDown -= SelectController.RightMouseClickHandler;
+        Observer.OnMoveEvent -= ObserverMoveHandler;
+        Observer.OnRotateEvent -= Project;
+        TargetCanvas.Children.Remove(VisibleEllipse);
+        BindingOperations.ClearAllBindings(VisibleEllipse);
+        VisibleEllipse = null!;
+        Observer = null!;
+        AttachedLines = null!;
+        FocusController = null!;
     }
-    public void Move(Point delta) 
-    {
-        X += delta.X;
-        Y += delta.Y;
-    }
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public void OnPropertyChanged([CallerMemberName] string prop = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-    public override bool Equals(object? obj) =>
-        Equals(obj as SgePoint);
-
-    public bool Equals(SgePoint? other) =>
-        X == other?.X && Y == other?.Y;
-
-    public override int GetHashCode() =>
-       HashCode.Combine(x, y);
-
-    
 }

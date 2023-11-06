@@ -14,28 +14,34 @@ namespace SimpleGraphicEditor.ViewModels;
 
 public class ObserverViewModel
 {
-      private Canvas TargetCanvas { get; }
-      private DragController ObserverDragController { get; } = null!;
-      public Observer Observer { get; } = null!;
-      public bool CanDragging 
-      {
-            get => ObserverDragController.CanDragging;
-            set => ObserverDragController.CanDragging = value;
-      }
-      public ObserverViewModel(Canvas targetCanvas)
-      {
-            TargetCanvas = targetCanvas;
-            ObserverDragController = new DragController(TargetCanvas, ObserverMove);            
-            Observer = new Observer(TargetCanvas, ObserverDragController, 0, 0);
-      }
-      //ДОПИСАТЬ ДЛЯ 3Д
-      private void ObserverMove(object sender, Point delta)
-      {
-            Debug.WriteLine($"ViewModel.ObserverMove: {delta.X}, {delta.Y}");
-            var canvas = sender as Canvas;
-            if(ReferenceEquals(TargetCanvas, canvas))
-            {                  
-                  Observer.Move(delta.X, delta.Y);
-            }
-      }
+    private Canvas TargetCanvas { get; }
+    public DragController ObserverDragController { get; } = null!;
+    public Observer Observer { get; } = null!;
+    public bool CanDragging 
+    {
+        get => ObserverDragController.CanDragging;
+        set => ObserverDragController.CanDragging = value;
+    }
+    public ObserverViewModel(Canvas targetCanvas)
+    {
+        TargetCanvas = targetCanvas;
+        ObserverDragController = new DragController(TargetCanvas, ObserverRotate);
+        Observer = new Observer(TargetCanvas, ObserverDragController);
+    }
+    private void ObserverMove(object sender, Point delta)
+    {
+        var canvas = sender as Canvas;
+        if(ReferenceEquals(TargetCanvas, canvas))
+        {                  
+             Observer.Move(delta.X, delta.Y);
+        }
+    }
+    private void ObserverRotate(object sender, Point delta)
+    {
+        var canvas = sender as Canvas;
+        if (ReferenceEquals(TargetCanvas, canvas))
+        {
+            Observer.Rotate(delta.Y * -Observer.RotateSpeed, delta.X * -Observer.RotateSpeed);
+        }
+    }
 }

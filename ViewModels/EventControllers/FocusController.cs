@@ -15,7 +15,7 @@ public class FocusController
         FocusFillBrush = focusFillBrush;
         FocusStrokeBrush = focusStrokeBrush;
     }
-    public void OnMouseEnter(object sender, MouseEventArgs eventArgs)
+    public void MouseEnterHandler(object sender, MouseEventArgs eventArgs)
     {
         if (CanFocus && sender is Shape focusable)
         {
@@ -28,7 +28,7 @@ public class FocusController
             eventArgs.Handled = true;
         }
     }
-    public void OnMouseLeave(object sender, MouseEventArgs eventArgs)
+    public void OnMouseLeaveHandler(object sender, MouseEventArgs eventArgs)
     {
         if (CanFocus && sender is Shape focusable)
         {

@@ -1,25 +1,57 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace SimpleGraphicEditor.ViewModels;
 public class SgeStatus : INotifyPropertyChanged
 {
-    private static string[] Messages { get; } = new string[]
+    private static string[] ActionMessages { get; } = new string[]
     {
-            "Точка",
-            "Первая точка линии",
-            "Вторая точка линии",
-            "Перемещение",
-            "Удаление",
-            "Группировка точек"
+            "Поставить точку",
+            "Указать первую точку линии",
+            "Указать вторую точку линии",
+            "Переместить точку",
+            "Удалить точку",
+            "Группировать точки"
     };
-    private static Action DefaultAction { get; } = Action.SetSignlePoint;
+    private string actionMessage = ActionMessages[(int)DefaultAction];
+    public string ActionMessage
+    {
+        get { return actionMessage; }
+        private set
+        {
+            actionMessage = value;
+            OnPropertyChanged(nameof(ActionMessage));
+        }
+    }
+    private string posButton1Text = ActionMessages[(int)DefaultAction];
+    public string PosButton1Text
+    {
+        get { return posButton1Text; }
+        private set
+        {
+            posButton1Text = value;
+            OnPropertyChanged(nameof(PosButton1Text));
+            OnPropertyChanged(nameof(PosBlock1Enabled));
+        }
+    }
+    public Visibility PosBlock1Enabled 
+    {
+        get 
+        {
+            if (posButton1Text != string.Empty)
+                return Visibility.Visible;
+            else
+                return Visibility.Collapsed;
+        }  
+    }
+    private static Action DefaultAction { get; } = Action.SetSinglePoint;
     public enum Action
     {
-        SetSignlePoint,
+        SetSinglePoint,
         ChooseLineStartPoint,
         ChooseLineEndPoint,
-        Drag,
+        Transfer,
         Delete,
         Grouping
     }
@@ -30,24 +62,14 @@ public class SgeStatus : INotifyPropertyChanged
         set
         {
             currentAction = value;
-            Message = Messages[(int)value];
+            ActionMessage = ActionMessages[(int)value];
+            if (value == Action.SetSinglePoint || value == Action.Transfer)
+                PosButton1Text = ActionMessages[(int)value];
+            else
+                PosButton1Text = string.Empty;
         }
-    }
-    private string message = Messages[(int)DefaultAction];
-    public string Message
-    {
-        get { return message; }
-        private set
-        {
-            message = value;
-            OnPropertyChanged(nameof(message));
-        }
-    }
+    }   
     public event PropertyChangedEventHandler? PropertyChanged;
-    public SgeStatus()
-    {
-
-    }
     public void OnPropertyChanged([CallerMemberName] string prop = "") =>
           PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
 }

@@ -1,5 +1,6 @@
 ﻿using SimpleGraphicEditor.Models;
 using SimpleGraphicEditor.ViewModels;
+using SimpleGraphicEditor.ViewModels.DTO;
 using SimpleGraphicEditor.ViewModels.EventControllers;
 using System;
 using System.Windows;
@@ -14,159 +15,104 @@ namespace SimpleGraphicEditor;
 public partial class MainWindow : Window
 {
     private SgeStatus Status { get; set; }
-    private MyPointsViewModel MyPointsViewModel { get; set; }
-    private ObserverViewModel ObserverViewModel { get; set; }
+    private PositionDto PosDto { get; set; }
+    private SgeMainViewModel MainViewModel { get; set; }
     public MainWindow()
     {
         InitializeComponent();
         Status = (SgeStatus)this.Resources["Status"];
-        ObserverViewModel = new ObserverViewModel(SgeCanvas);
-        MyPointsViewModel = new MyPointsViewModel(SgeCanvas, ObserverViewModel.Observer);
-        ObserverViewModel.CanDragging = true;
-        MyPointsViewModel.CanDragging = true;
-        MyPointsViewModel.CanFocus = true;
-        MyPointsViewModel.CreatePoint(0, 0, 0);
-        MyPointsViewModel.CreatePoint(50d, 50d, 50d);
-    }
-    private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
-    { Status.CurrentAction = SgeStatus.Action.SetSignlePoint; eventArgs.Handled = true; }
-    private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
-    { Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint; eventArgs.Handled = true; }
-    private void DeleteButtonClick(object sender, RoutedEventArgs eventArgs)
-    { Status.CurrentAction = SgeStatus.Action.Delete; eventArgs.Handled = true; }
-    private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
-    { Status.CurrentAction = SgeStatus.Action.Drag; eventArgs.Handled = true; }
-    private void GroupingButtonClick(object sender, RoutedEventArgs eventArgs) 
-    { Status.CurrentAction = SgeStatus.Action.Grouping; eventArgs.Handled = true; }
-    private void OnCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
-    {  
-        Point cursorPosition = eventArgs.GetPosition(SgeCanvas);
-        MyPointsViewModel.CreatePoint(cursorPosition.X, cursorPosition.Y, 0d);
-    }
-    private void OnCanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs) { }
-    /*
-    private SgeStatus Status { get; set; }
-    private SgeViewModel ViewModel { get; set; }
-    public MainWindow()
-    {
-        InitializeComponent();
-        Status = (SgeStatus)this.Resources["Status"];
-        ViewModel = new SgeViewModel(SgeCanvas);
+        PosDto = (PositionDto)this.Resources["PosDto"];
+        MainViewModel = new SgeMainViewModel(SgeCanvas, Status, PosDto);
+        
+
     }
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        Status.CurrentAction = SgeStatus.Action.SetSignlePoint;
-
-        ViewModel.PointFactory.DragController.CanDragging = false;
-        ViewModel.BindPointFactory.DragController.CanDragging = false;
-        ViewModel.LineFactory.DragController.CanDragging = false;
-        ViewModel.PointFactory.FocusController.CanFocus = false;
-        ViewModel.LineFactory.FocusController.CanFocus = false;
-
-        eventArgs.Handled = true;
+        PosDto.IsValid = true;
+        MainViewModel.PointsViewModel.CanSelect = false;
+        MainViewModel.PointsViewModel.CanFocus = false;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        Status.CurrentAction = SgeStatus.Action.SetSinglePoint; 
+        eventArgs.Handled = true; 
     }
     private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
     {
-        Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint;
-
-        ViewModel.PointFactory.DragController.CanDragging = false;
-        ViewModel.BindPointFactory.DragController.CanDragging = false;
-        ViewModel.LineFactory.DragController.CanDragging = false;
-        ViewModel.PointFactory.FocusController.CanFocus = true;
-        ViewModel.LineFactory.FocusController.CanFocus = false;
-
-        eventArgs.Handled = true;
+        MainViewModel.PointsViewModel.CanSelect = false;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint; 
+        eventArgs.Handled = true; 
     }
     private void DeleteButtonClick(object sender, RoutedEventArgs eventArgs)
-    {
+    { 
         Status.CurrentAction = SgeStatus.Action.Delete;
-
-        ViewModel.PointFactory.DragController.CanDragging = false;
-        ViewModel.BindPointFactory.DragController.CanDragging = false;
-        ViewModel.LineFactory.DragController.CanDragging = false;
-        ViewModel.PointFactory.FocusController.CanFocus = true;
-        ViewModel.LineFactory.FocusController.CanFocus = true;
-
-        eventArgs.Handled = true;
+        MainViewModel.PointsViewModel.CanSelect = false;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = true;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        eventArgs.Handled = true; 
     }
     private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
-    {
-        Status.CurrentAction = SgeStatus.Action.Drag;
-
-        ViewModel.PointFactory.DragController.CanDragging = true;
-        ViewModel.BindPointFactory.DragController.CanDragging = false;
-        ViewModel.LineFactory.DragController.CanDragging = true;
-        ViewModel.PointFactory.FocusController.CanFocus = true;
-        ViewModel.LineFactory.FocusController.CanFocus = true;
-
-        eventArgs.Handled = true;
+    {       
+        PosDto.IsValid = false;
+        MainViewModel.PointsViewModel.CanSelect = true;
+        MainViewModel.PointsViewModel.CanFocus = false;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        Status.CurrentAction = SgeStatus.Action.Transfer;
+        eventArgs.Handled = true; 
     }
     private void GroupingButtonClick(object sender, RoutedEventArgs eventArgs) 
-    {   
-        Status.CurrentAction = SgeStatus.Action.Grouping;
-
-        ViewModel.PointFactory.DragController.CanDragging = false;
-        ViewModel.BindPointFactory.DragController.CanDragging = true;
-        ViewModel.LineFactory.DragController.CanDragging = false;
-        ViewModel.PointFactory.FocusController.CanFocus = true;
-        ViewModel.LineFactory.FocusController.CanFocus = false;
-
-        eventArgs.Handled = true;
-    }    
-    
-    private void OnCanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs) 
+    { 
+        Status.CurrentAction = SgeStatus.Action.Grouping; 
+        eventArgs.Handled = true; 
+    }
+    private void CanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs) 
+    { 
+        MainViewModel.ObserverViewModel.Observer.Rotate(0.1d, 0.1d); 
+    }
+    private void CanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs)
     {
-        var ellipse = eventArgs.OriginalSource as Ellipse;
-        var line = eventArgs.OriginalSource as Line;
         switch (Status.CurrentAction)
         {
-            case SgeStatus.Action.Drag:
-                return;
-            case SgeStatus.Action.SetSignlePoint:
-                Point cursorPosition = eventArgs.GetPosition(SgeCanvas);
-                ViewModel.CreatePoint(cursorPosition);
-                break;
             case SgeStatus.Action.ChooseLineStartPoint:
-                if (ellipse != null)
+                if (MainViewModel.LinesViewModel.SetPointBuffer(eventArgs.OriginalSource, MainViewModel.PointsViewModel)) 
                 {
-                    ViewModel.EllipseBuffer = ellipse;
-                    Status.CurrentAction = SgeStatus.Action.ChooseLineEndPoint;                    
-                }
+                    Status.CurrentAction = SgeStatus.Action.ChooseLineEndPoint;
+                    eventArgs.Handled = true;
+                }                
                 break;
             case SgeStatus.Action.ChooseLineEndPoint:
-                if (ellipse != null && ellipse != ViewModel.EllipseBuffer)
+                if (MainViewModel.LinesViewModel.CreateLine(eventArgs.OriginalSource, MainViewModel.PointsViewModel))
                 {
-                    ViewModel.CreateLineFromBuffer(ellipse);
                     Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint;
-                }
+                    eventArgs.Handled = true;
+                }                   
                 break;
             case SgeStatus.Action.Delete:
-                if (line != null)
-                    ViewModel.RemoveLine((Line)eventArgs.OriginalSource);
-                else if(ellipse != null)
-                    ViewModel.RemovePoint((Ellipse)eventArgs.OriginalSource);
-                break;
-            case SgeStatus.Action.Grouping:
-                if(ellipse != null) 
+                if (MainViewModel.PointsViewModel.RemovePoint(eventArgs.OriginalSource, MainViewModel.LinesViewModel) || MainViewModel.LinesViewModel.RemoveLine(eventArgs.OriginalSource)) 
                 {
-                    ViewModel.AddToGroup(ellipse);
-                }
+                    eventArgs.Handled = true;
+                }              
                 break;
-        }        
+        }
     }
-    private void OnCanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs)
+    private void PosButton1Click(object sender, RoutedEventArgs eventArgs)
     {
-        var ellipse = eventArgs.OriginalSource as Ellipse;
-        switch (Status.CurrentAction) 
+        switch (Status.CurrentAction)
         {
-            case SgeStatus.Action.Grouping:
-                if (ellipse != null)
-                {
-                    ViewModel.DeleteFromGroup(ellipse);
-                }
+            case SgeStatus.Action.Transfer:
+                if (PosDto.IsValid)
+                    MainViewModel.PointsViewModel.TransferPoint(PosDto.X, PosDto.Y, PosDto.Z);
+                break;
+            case SgeStatus.Action.SetSinglePoint:
+                if (PosDto.IsValid)
+                    MainViewModel.PointsViewModel.CreatePoint(PosDto.X, PosDto.Y, PosDto.Z);
                 break;
         }
         eventArgs.Handled = true;
-    }*/
+    }
 
 }

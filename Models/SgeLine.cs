@@ -1,35 +1,41 @@
-﻿using SimpleGraphicEditor.Models.Abstractions;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
+﻿using SimpleGraphicEditor.ViewModels.EventControllers;
+using SimpleGraphicEditor.ViewModels.Static;
+using System.Windows.Shapes;
+using System.Windows.Controls;
+using SimpleGraphicEditor.Models.Abstractions;
+using System.Windows.Data;
 
 namespace SimpleGraphicEditor.Models;
 
-public class SgeLine : IMoveable
+public class SgeLine : VisibleLine3D
 {
-    public SgePoint Point1 { get; }
-    public SgePoint Point2 { get; }
-    public SgeLine(SgePoint point1, SgePoint point2)
+    private FocusController FocusController { get; set; }
+    public SgeLine(Canvas targetCanvas, FocusController focusController, Point3D firstPoint, Point3D secondPoint) : base(targetCanvas, firstPoint, secondPoint)
     {
-        Point1 = point1;      
-        Point2 = point2;
-        point1.AttachedLines.AddLast(this);
-        point2.AttachedLines.AddLast(this);
+        FocusController = focusController;
+        VisibleLine.MouseEnter += FocusController.MouseEnterHandler;
+        VisibleLine.MouseLeave += FocusController.OnMouseLeaveHandler;
     }
-    public override bool Equals(object? obj) =>
-        Equals(obj as SgeLine);
-    public bool Equals(SgeLine? other) =>
-        (other != null) &&
-        ((other.Point1.Equals(Point1) && other.Point2.Equals(Point2)) || 
-        (other.Point2.Equals(Point1) && other.Point1.Equals(Point2)));
-
-    public override int GetHashCode()
-        => (Point1.GetHashCode() ^ Point2.GetHashCode());
-
-    public void Move(Point delta)
-    {       
-        Point1.Move(delta);
-        Point2.Move(delta);
+    protected override Line CreateVisibleLine()
+    {
+        var line = new Line()
+        {
+            Stroke = DefaultValues.DefaultLineBrush,
+            StrokeThickness = DefaultValues.DefaultLineThickness,
+        };      
+        return line;
+    }
+    public void Remove()
+    {
+        FirstPoint.AttachedLines.Remove(this);
+        SecondPoint.AttachedLines.Remove(this);
+        BindingOperations.ClearAllBindings(VisibleLine);
+        VisibleLine.MouseEnter -= FocusController.MouseEnterHandler;
+        VisibleLine.MouseLeave -= FocusController.OnMouseLeaveHandler;
+        TargetCanvas.Children.Remove(VisibleLine);
+        FirstPoint = null!;
+        SecondPoint = null!;
+        VisibleLine = null!;
+        FocusController = null!;
     }
 }
