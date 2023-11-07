@@ -34,8 +34,11 @@ public class SgeLinesViewModel
     }
     public bool CreateLine(object sender, SgePointsViewModel pointsViewModel)
     {
-        if (sender is Ellipse ellipse && PointBuffer != null && pointsViewModel.Points.ContainsKey(ellipse) && PointBuffer != pointsViewModel.Points[ellipse])
-        {
+        if (sender is Ellipse ellipse && 
+            PointBuffer != null && 
+            pointsViewModel.Points.ContainsKey(ellipse) && 
+            PointBuffer != pointsViewModel.Points[ellipse])
+        {            
             var myLine = new SgeLine(TargetCanvas, LineFocusController, PointBuffer, pointsViewModel.Points[ellipse]);
             var line = myLine.VisibleLine;
             Lines.Add(line, myLine);

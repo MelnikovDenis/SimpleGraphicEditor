@@ -1,14 +1,23 @@
 using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Diagnostics;
 using SimpleGraphicEditor.ViewModels.EventControllers;
+using System.Windows.Media;
 
 namespace SimpleGraphicEditor.Models;
 public class Observer
 {    
+    private static double MinViewPointZ { get; set; } = 5000d;
+    private static double MaxViewPointZ { get; set; } = 25000d; 
+    private static double MinScale { get; set; } = 1d;
+    private static double MaxScale { get; set; } = 5d;
+     private static double Ratio { get => MaxViewPointZ / MaxScale; }
     public event Action<double, double>? OnMoveEvent;
     public event Action? OnRotateEvent;
-    private double x = 200;
-    private double y = 200;
+    private double x = 0;
+    private double y = 0;
 
     public virtual double X { get => x; set => x = value; }
 
@@ -50,14 +59,39 @@ public class Observer
     public double SinY { get => sinY; }
     public double CosX { get => cosX; }
     public double CosY { get => cosY; }
-    public double ViewPointZ { get; set; } = 100000d;
+    public double viewPointZ = MaxViewPointZ;
+    public double ViewPointZ 
+    {
+        get => viewPointZ; 
+        set => viewPointZ = Limit(value, MinViewPointZ, MaxViewPointZ);
+    }
+    private Canvas TargetCanvas {get; set; }       
+    private ScaleTransform ScaleTransf {get; set; } 
+    private double ScaleCoef 
+    {
+        set 
+        {
+            ScaleTransf.ScaleX = Limit(value, MinScale, MaxScale);
+            ScaleTransf.ScaleY = ScaleTransf.ScaleX;
+        }
+        get
+        {
+            return ScaleTransf.ScaleX;
+        }
+    } 
     public Observer(Canvas targetCanvas, DragController dragController)
     {
-        AngleX = 0.3d;
-        AngleY = 0.3d;
+        AngleX = Math.PI;
+        AngleY = 0d;
+        TargetCanvas = targetCanvas;
         targetCanvas.MouseMove += dragController.MouseMoveHandler;
         targetCanvas.MouseLeftButtonDown += dragController.MouseLeftButtonDownHandler;
         targetCanvas.MouseLeftButtonUp += dragController.MouseLeftButtonDownHandler;
+        targetCanvas.MouseWheel += OnMouseWheel;
+        targetCanvas.SizeChanged += OnSizeChanged;
+        Move(TargetCanvas.ActualWidth / 2d, TargetCanvas.ActualHeight / 2d);        
+        ScaleTransf = new ScaleTransform(MaxScale, MaxScale, TargetCanvas.ActualWidth / 2d, TargetCanvas.ActualHeight / 2d);
+        targetCanvas.RenderTransform = ScaleTransf;
     }
     public void Move(double deltaX, double deltaY)
     {
@@ -72,5 +106,27 @@ public class Observer
         AngleX += deltaAngleX;
         AngleY += deltaAngleY;
         OnRotateEvent?.Invoke();
+    }
+    private void OnMouseWheel(object sender, MouseWheelEventArgs eventArgs)
+    {        
+        ScaleTransf.CenterX = TargetCanvas.ActualWidth / 2d;
+        ScaleTransf.CenterY = TargetCanvas.ActualHeight / 2d;
+        ScaleCoef += eventArgs.Delta / Ratio;
+        ViewPointZ += eventArgs.Delta;
+        OnRotateEvent?.Invoke();
+    }
+    private void OnSizeChanged(object sender, SizeChangedEventArgs eventArgs)
+    {
+        
+        Move((eventArgs.NewSize.Width - eventArgs.PreviousSize.Width) / 2d, (eventArgs.NewSize.Height - eventArgs.PreviousSize.Height) / 2d);
+    }
+    private static double Limit(double value, double min, double max)
+    {
+        if (value > max)
+            return max;
+        else if (value < min)
+            return min;
+        else
+            return value;
     }
 }

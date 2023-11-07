@@ -41,7 +41,7 @@ public class ObserverViewModel
         var canvas = sender as Canvas;
         if (ReferenceEquals(TargetCanvas, canvas))
         {
-            Observer.Rotate(delta.Y * -Observer.RotateSpeed, delta.X * -Observer.RotateSpeed);
+            Observer.Rotate(delta.Y * Observer.RotateSpeed, delta.X * -Observer.RotateSpeed);
         }
     }
 }

@@ -27,21 +27,18 @@ public class SgeMainViewModel
         PointsViewModel = new SgePointsViewModel(TargetCanvas, ObserverViewModel.Observer, PosDto);
         LinesViewModel = new SgeLinesViewModel(TargetCanvas);
 
-        var negativeX = new Point3D(-10000d, 0d, 0d, ObserverViewModel.Observer);
-        var positiveX = new Point3D(10000d, 0d, 0d, ObserverViewModel.Observer);
-        var negativeY = new Point3D(0, -10000d, 0d, ObserverViewModel.Observer);
-        var positiveY = new Point3D(0, 10000d, 0d, ObserverViewModel.Observer);
-        var negativeZ = new Point3D(0, 0d, -10000d, ObserverViewModel.Observer);
-        var positiveZ = new Point3D(0, 0d, 10000d, ObserverViewModel.Observer);
-        var xAxis = new CoordinateAxis(TargetCanvas, DefaultValues.XAxisBrush, negativeX, positiveX);
-        var yAxis = new CoordinateAxis(TargetCanvas, DefaultValues.YAxisBrush, negativeY, positiveY);
-        var zAxis = new CoordinateAxis(TargetCanvas, DefaultValues.ZAxisBrush, negativeZ, positiveZ);
+        var zero = new Point3D(0, 0, 0, ObserverViewModel.Observer);
+        var positiveX = new Point3D(100d, 0d, 0d, ObserverViewModel.Observer);
+        var positiveY = new Point3D(0, 100d, 0d, ObserverViewModel.Observer);
+        var positiveZ = new Point3D(0, 0d, 100d, ObserverViewModel.Observer);
+        var xPositiveAxis = new CoordinateAxis(TargetCanvas, DefaultValues.XAxisBrush, zero, positiveX);
+        var yPositiveAxis = new CoordinateAxis(TargetCanvas, DefaultValues.YAxisBrush, zero, positiveY);
+        var zPositiveAxis = new CoordinateAxis(TargetCanvas, DefaultValues.ZAxisBrush, zero, positiveZ);
 
 
         ObserverViewModel.CanDragging = true;
         PointsViewModel.CanFocus = false;
         PointsViewModel.CanSelect = false;
         LinesViewModel.CanFocus = false;
-    }
-    
+    }    
 }

@@ -35,14 +35,13 @@ public class SgePointsViewModel
         TargetCanvas = targetCanvas;
         Observer = observer;
         PosDto = posDto;
-        PointSelectController = new SelectController(DefaultValues.SelectPointBrush, DefaultValues.SelectPointBrush, SetPointBuffer, UnsetPointBuffer);      
+        PointSelectController = new SelectController(DefaultValues.SelectPointFillBrush, DefaultValues.SelectPointFillBrush, SetPointBuffer, UnsetPointBuffer);      
     }
-    public SgePoint CreatePoint(double x, double y, double z)
+    public void CreatePoint(double x, double y, double z)
     {
         var point = new SgePoint(TargetCanvas, PointFocusController, PointSelectController, Observer, x, y, z, DefaultValues.MinCoordinate, DefaultValues.MaxCoordinate);
         var ellipse = point.VisibleEllipse;
         Points.Add(ellipse, point);
-        return point;
     }
     public void SetPointBuffer(object sender) 
     {

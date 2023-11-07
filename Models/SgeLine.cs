@@ -14,7 +14,7 @@ public class SgeLine : VisibleLine3D
     {
         FocusController = focusController;
         VisibleLine.MouseEnter += FocusController.MouseEnterHandler;
-        VisibleLine.MouseLeave += FocusController.OnMouseLeaveHandler;
+        VisibleLine.MouseLeave += FocusController.OnMouseLeaveHandler;        
     }
     protected override Line CreateVisibleLine()
     {
@@ -27,8 +27,8 @@ public class SgeLine : VisibleLine3D
     }
     public void Remove()
     {
-        FirstPoint.AttachedLines.Remove(this);
-        SecondPoint.AttachedLines.Remove(this);
+        FirstPoint.AttachedLines.Remove((Line3D)this);
+        SecondPoint.AttachedLines.Remove((Line3D)this);
         BindingOperations.ClearAllBindings(VisibleLine);
         VisibleLine.MouseEnter -= FocusController.MouseEnterHandler;
         VisibleLine.MouseLeave -= FocusController.OnMouseLeaveHandler;

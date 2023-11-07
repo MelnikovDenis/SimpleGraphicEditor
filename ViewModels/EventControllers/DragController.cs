@@ -27,7 +27,6 @@ public class DragController
                 draggable.CaptureMouse();
             Debug.Write(LastTouch);
             LastTouch = eventArgs.GetPosition(TargetCanvas);
-            Debug.WriteLine($"  =>  {LastTouch}");
             IsDragging = true;
             eventArgs.Handled = true;
         }

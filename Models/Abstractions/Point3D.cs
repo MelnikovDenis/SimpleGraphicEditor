@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -89,7 +90,7 @@ public class Point3D : INotifyPropertyChanged
         RealZ = newZ;
         Project();
     }
-    protected void Project()
+    protected virtual void Project()
     {
         var homogeneousCoordinate = RealX * Observer.SinY * Observer.CosX / Observer.ViewPointZ
             - RealZ * Observer.CosY * Observer.CosX / Observer.ViewPointZ

@@ -11,7 +11,8 @@
         MinHeight="480" 
         MinWidth="720" 
         Width="{Binding ElementName=SgeWindow, Path=MinWidth}"
-        Height="{Binding ElementName=SgeWindow, Path=MinHeight}">
+        Height="{Binding ElementName=SgeWindow, Path=MinHeight}"
+        Loaded="OnLoad">
     <Window.Resources>
         <local:SgeStatus x:Key="Status" />
         <dto:PositionDto x:Key="PosDto" />
@@ -28,7 +29,7 @@
                 BorderThickness="0,0,0,2" 
                 BorderBrush="Black" 
                 Background="Gray"
-                Panel.ZIndex="3">
+                Panel.ZIndex="4">
             <Menu Height="20" VerticalAlignment="Top" Background="Gray">
                 <MenuItem Header="Файл">
                     <MenuItem Header="Импорт"></MenuItem>
@@ -48,7 +49,7 @@
                 BorderThickness="0,0,2,0" 
                 BorderBrush="Black" 
                 Background="Gray"
-                Panel.ZIndex="3">
+                Panel.ZIndex="4">
                 <!--Табличная разметка боковой панели инструментов верхнего уровня-->
                 <Grid>
                     <Grid.RowDefinitions>
@@ -59,7 +60,7 @@
                     
                     <!--Кнопки верхней панели инструментов-->
                     <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top">
-                        <TextBlock Grid.Column="0" Text="Панель инструментов" VerticalAlignment="Center" />
+                        <TextBlock Text="Панель инструментов" VerticalAlignment="Center" />
                         <Button x:Name="PointButton" 
                             Content="Точка" 
                             Style="{StaticResource ToolButtonStyle}" 
@@ -143,15 +144,14 @@
             <!--Холст для рисования-->
             <Canvas x:Name="SgeCanvas"
                 MouseLeftButtonDown="CanvasLeftMouseDown"
-                MouseRightButtonDown="CanvasRightMouseDown"
-                Background="White" Grid.Column="1" Margin="100,0,0,0"/>
+                Background="White" Grid.Column="1"/>
         </Grid>
         <!--Статусная строка-->
         <Border Grid.Row="2"
                 BorderThickness="0,2,0,0" 
                 BorderBrush="Black" 
                 Background="Gray"
-                Panel.ZIndex="3" 
+                Panel.ZIndex="4" 
                 >
             <TextBlock  x:Name="StatusTextBlock" 
                         Text="{Binding Source={StaticResource Status}, Path=ActionMessage}" />

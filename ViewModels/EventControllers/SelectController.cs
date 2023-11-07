@@ -16,7 +16,11 @@ public class SelectController
     public Brush? SelectStrokeBrush { get; set; } = null;
     public event Action<object> OnSelect;
     public event Action<object> OnUnselect;
-    public SelectController(Brush? selectFillBrush, Brush? selectStrokeBrush, Action<object> onLeftMouseClick, Action<object> onRightMouseClick, bool allowMultipleSelect = false)
+    public SelectController(Brush? selectFillBrush, 
+        Brush? selectStrokeBrush, 
+        Action<object> onLeftMouseClick, 
+        Action<object> onRightMouseClick, 
+        bool allowMultipleSelect = false)
     {
         AllowMultipleSelect = allowMultipleSelect;
         SelectFillBrush = selectFillBrush;

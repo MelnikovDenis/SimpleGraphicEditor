@@ -14,17 +14,18 @@ namespace SimpleGraphicEditor;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private SgeStatus Status { get; set; }
-    private PositionDto PosDto { get; set; }
-    private SgeMainViewModel MainViewModel { get; set; }
+    private SgeStatus Status { get; set; } = null!;
+    private PositionDto PosDto { get; set; }  = null!;
+    private SgeMainViewModel MainViewModel { get; set; } = null!;
     public MainWindow()
     {
-        InitializeComponent();
+        InitializeComponent();        
+    }
+    void OnLoad(object sender, RoutedEventArgs e)
+    {
         Status = (SgeStatus)this.Resources["Status"];
         PosDto = (PositionDto)this.Resources["PosDto"];
-        MainViewModel = new SgeMainViewModel(SgeCanvas, Status, PosDto);
-        
-
+        MainViewModel = new SgeMainViewModel(SgeCanvas, Status, PosDto);        
     }
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {
@@ -68,10 +69,6 @@ public partial class MainWindow : Window
     { 
         Status.CurrentAction = SgeStatus.Action.Grouping; 
         eventArgs.Handled = true; 
-    }
-    private void CanvasRightMouseDown(object sender, MouseButtonEventArgs eventArgs) 
-    { 
-        MainViewModel.ObserverViewModel.Observer.Rotate(0.1d, 0.1d); 
     }
     private void CanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs)
     {
