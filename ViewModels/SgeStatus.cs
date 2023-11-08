@@ -7,12 +7,12 @@ public class SgeStatus : INotifyPropertyChanged
 {
     private static string[] ActionMessages { get; } = new string[]
     {
-            "Поставить точку",
-            "Указать первую точку линии",
-            "Указать вторую точку линии",
-            "Переместить точку",
-            "Удалить точку",
-            "Группировать точки"
+        "Поставить точку",
+        "Указать первую точку линии",
+        "Указать вторую точку линии",
+        "Переместить точку",
+        "Удалить точку",
+        "Группировать точки"
     };
     private string actionMessage = ActionMessages[(int)DefaultAction];
     public string ActionMessage

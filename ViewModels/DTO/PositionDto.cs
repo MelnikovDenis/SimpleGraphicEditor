@@ -17,6 +17,12 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
         get => !Errors.Values.Any(x => x != string.Empty) && isValid; 
         set 
         { 
+            if(!value)
+            {
+                X = 0d;
+                Y = 0d;
+                Z = 0d;
+            }
             isValid = value; 
             OnPropertyChanged(nameof(IsValid)); 
         } 

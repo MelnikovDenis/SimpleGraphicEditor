@@ -4,6 +4,7 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using SimpleGraphicEditor.Models.Abstractions;
 using System.Windows.Data;
+using System.Diagnostics;
 
 namespace SimpleGraphicEditor.Models;
 
@@ -14,7 +15,8 @@ public class SgeLine : VisibleLine3D
     {
         FocusController = focusController;
         VisibleLine.MouseEnter += FocusController.MouseEnterHandler;
-        VisibleLine.MouseLeave += FocusController.OnMouseLeaveHandler;        
+        VisibleLine.MouseLeave += FocusController.OnMouseLeaveHandler;
+        Canvas.SetZIndex(VisibleLine, DefaultValues.DefaultLineZIndex);     
     }
     protected override Line CreateVisibleLine()
     {
@@ -27,8 +29,8 @@ public class SgeLine : VisibleLine3D
     }
     public void Remove()
     {
-        FirstPoint.AttachedLines.Remove((Line3D)this);
-        SecondPoint.AttachedLines.Remove((Line3D)this);
+        Debug.WriteLine(FirstPoint.AttachedLines.Remove(this));
+        Debug.WriteLine(SecondPoint.AttachedLines.Remove(this));
         BindingOperations.ClearAllBindings(VisibleLine);
         VisibleLine.MouseEnter -= FocusController.MouseEnterHandler;
         VisibleLine.MouseLeave -= FocusController.OnMouseLeaveHandler;

@@ -9,11 +9,31 @@ using System.Windows.Media;
 namespace SimpleGraphicEditor.Models;
 public class Observer
 {    
-    private static double MinViewPointZ { get; set; } = 5000d;
-    private static double MaxViewPointZ { get; set; } = 25000d; 
+    private static double MinViewPointZ { get; set; } = 2000d;
+    private static double MaxViewPointZ { get; set; } = 8000d; 
     private static double MinScale { get; set; } = 1d;
-    private static double MaxScale { get; set; } = 5d;
-     private static double Ratio { get => MaxViewPointZ / MaxScale; }
+    private static double MaxScale { get; set; } = 4d;
+    private static double Ratio { get => MaxViewPointZ / MaxScale; }
+    private Canvas TargetCanvas {get; set; }
+    private ScaleTransform ScaleTransf {get; set; }
+    private double ScaleCoef 
+    {
+        set 
+        {
+            ScaleTransf.ScaleX = Limit(value, MinScale, MaxScale);
+            ScaleTransf.ScaleY = ScaleTransf.ScaleX;
+        }
+        get
+        {
+            return ScaleTransf.ScaleX;
+        }
+    } 
+    public double viewPointZ;
+    public double ViewPointZ 
+    {
+        get => viewPointZ; 
+        set => viewPointZ = Limit(value, MinViewPointZ, MaxViewPointZ);
+    }
     public event Action<double, double>? OnMoveEvent;
     public event Action? OnRotateEvent;
     private double x = 0;
@@ -21,8 +41,7 @@ public class Observer
 
     public virtual double X { get => x; set => x = value; }
 
-    public virtual double Y { get => y; set => y = value; }
-    public double RotateSpeed { get; private set; } = 0.001d;
+    public virtual double Y { get => y; set => y = value; }    
     private double angleX = 0d;
     private double angleY = 0d;   
     public double AngleX
@@ -58,27 +77,7 @@ public class Observer
     public double SinX { get => sinX; }
     public double SinY { get => sinY; }
     public double CosX { get => cosX; }
-    public double CosY { get => cosY; }
-    public double viewPointZ = MaxViewPointZ;
-    public double ViewPointZ 
-    {
-        get => viewPointZ; 
-        set => viewPointZ = Limit(value, MinViewPointZ, MaxViewPointZ);
-    }
-    private Canvas TargetCanvas {get; set; }       
-    private ScaleTransform ScaleTransf {get; set; } 
-    private double ScaleCoef 
-    {
-        set 
-        {
-            ScaleTransf.ScaleX = Limit(value, MinScale, MaxScale);
-            ScaleTransf.ScaleY = ScaleTransf.ScaleX;
-        }
-        get
-        {
-            return ScaleTransf.ScaleX;
-        }
-    } 
+    public double CosY { get => cosY; }          
     public Observer(Canvas targetCanvas, DragController dragController)
     {
         AngleX = Math.PI;
@@ -87,11 +86,14 @@ public class Observer
         targetCanvas.MouseMove += dragController.MouseMoveHandler;
         targetCanvas.MouseLeftButtonDown += dragController.MouseLeftButtonDownHandler;
         targetCanvas.MouseLeftButtonUp += dragController.MouseLeftButtonDownHandler;
-        targetCanvas.MouseWheel += OnMouseWheel;
+        targetCanvas.MouseWheel += OnMouseWheel;        
         targetCanvas.SizeChanged += OnSizeChanged;
-        Move(TargetCanvas.ActualWidth / 2d, TargetCanvas.ActualHeight / 2d);        
-        ScaleTransf = new ScaleTransform(MaxScale, MaxScale, TargetCanvas.ActualWidth / 2d, TargetCanvas.ActualHeight / 2d);
+
+        Move(TargetCanvas.ActualWidth / 2d, TargetCanvas.ActualHeight / 2d);
+        ScaleTransf = new ScaleTransform(MaxScale / 2d, MaxScale / 2d, TargetCanvas.ActualWidth / 2d, TargetCanvas.ActualHeight / 2d);
         targetCanvas.RenderTransform = ScaleTransf;
+        ViewPointZ = MaxViewPointZ / 2d;        
+       
     }
     public void Move(double deltaX, double deltaY)
     {
@@ -108,7 +110,7 @@ public class Observer
         OnRotateEvent?.Invoke();
     }
     private void OnMouseWheel(object sender, MouseWheelEventArgs eventArgs)
-    {        
+    {
         ScaleTransf.CenterX = TargetCanvas.ActualWidth / 2d;
         ScaleTransf.CenterY = TargetCanvas.ActualHeight / 2d;
         ScaleCoef += eventArgs.Delta / Ratio;
@@ -117,7 +119,8 @@ public class Observer
     }
     private void OnSizeChanged(object sender, SizeChangedEventArgs eventArgs)
     {
-        
+        ScaleTransf.CenterX = TargetCanvas.ActualWidth / 2d;
+        ScaleTransf.CenterY = TargetCanvas.ActualHeight / 2d;
         Move((eventArgs.NewSize.Width - eventArgs.PreviousSize.Width) / 2d, (eventArgs.NewSize.Height - eventArgs.PreviousSize.Height) / 2d);
     }
     private static double Limit(double value, double min, double max)

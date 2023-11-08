@@ -9,10 +9,10 @@
         mc:Ignorable="d"       
         Title="SimpleGraphicEditor" 
         MinHeight="480" 
-        MinWidth="720" 
+        MinWidth="720"
+        Loaded="OnLoad"
         Width="{Binding ElementName=SgeWindow, Path=MinWidth}"
-        Height="{Binding ElementName=SgeWindow, Path=MinHeight}"
-        Loaded="OnLoad">
+        Height="{Binding ElementName=SgeWindow, Path=MinHeight}">
     <Window.Resources>
         <local:SgeStatus x:Key="Status" />
         <dto:PositionDto x:Key="PosDto" />
@@ -32,8 +32,8 @@
                 Panel.ZIndex="4">
             <Menu Height="20" VerticalAlignment="Top" Background="Gray">
                 <MenuItem Header="Файл">
-                    <MenuItem Header="Импорт"></MenuItem>
-                    <MenuItem Header="Экспорт"></MenuItem>
+                    <MenuItem Header="Открыть" Click="MenuOpenClick"></MenuItem>
+                    <MenuItem Header="Сохранить" Click="MenuSaveClick"></MenuItem>
                 </MenuItem>
             </Menu>
         </Border>
@@ -143,7 +143,7 @@
             </Border>
             <!--Холст для рисования-->
             <Canvas x:Name="SgeCanvas"
-                MouseLeftButtonDown="CanvasLeftMouseDown"
+                MouseLeftButtonDown="CanvasLeftMouseDown"                
                 Background="White" Grid.Column="1"/>
         </Grid>
         <!--Статусная строка-->

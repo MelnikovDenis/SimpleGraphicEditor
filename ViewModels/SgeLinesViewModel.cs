@@ -11,7 +11,7 @@ namespace SimpleGraphicEditor.ViewModels;
 public class SgeLinesViewModel
 {
     private Canvas TargetCanvas { get; }
-    private FocusController LineFocusController { get; } = new FocusController(null, DefaultValues.FocusBrush);
+    private FocusController LineFocusController { get; } = new FocusController(null, DefaultValues.FocusLineStrokeBrush);
     public Dictionary<Line, SgeLine> Lines { get; } = new Dictionary<Line, SgeLine>();
     public Point3D? PointBuffer { get; private set; } = null;
     public bool CanFocus
@@ -27,7 +27,7 @@ public class SgeLinesViewModel
     {
         if (sender is Ellipse ellipse && pointsViewModel.Points.ContainsKey(ellipse))
         {
-            PointBuffer = pointsViewModel.Points[ellipse];
+            PointBuffer = pointsViewModel.Points[ellipse];            
             return true;
         }
         return false;
@@ -46,6 +46,12 @@ public class SgeLinesViewModel
             return true;
         }
         return false;
+    }
+    public void CreateLine(Point3D firstPoint, Point3D secondPoint)
+    {
+        var myLine = new SgeLine(TargetCanvas, LineFocusController, firstPoint, secondPoint);
+        var line = myLine.VisibleLine;
+        Lines.Add(line, myLine);
     }
     public bool RemoveLine(object sender) 
     {

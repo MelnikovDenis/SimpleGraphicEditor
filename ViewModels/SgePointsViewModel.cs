@@ -16,55 +16,58 @@ public class SgePointsViewModel
     private Canvas TargetCanvas { get; }
     private Observer Observer { get; }
     private PositionDto PosDto { get;  }
-    private FocusController PointFocusController { get; } = new FocusController(null, DefaultValues.FocusBrush);
-    private SelectController PointSelectController { get; }
-    public Point3D? PointBuffer { get; private set; } = null;
+    public SgePoint? PointBuffer { get; private set; } = null;
     public Dictionary<Ellipse, SgePoint> Points { get; } = new Dictionary<Ellipse, SgePoint>();
     public bool CanFocus
     {
-        get => PointFocusController.CanFocus;
-        set => PointFocusController.CanFocus = value;
+        get => SgePoint.CanFocus;
+        set => SgePoint.CanFocus = value;
     }
     public bool CanSelect
     {
-        get => PointSelectController.CanSelect;
-        set => PointSelectController.CanSelect = value;
+        get => SgePoint.CanSelect;
+        set => SgePoint.CanSelect = value;
     }
+    public bool CanTransfer { get; set; } = false;
     public SgePointsViewModel(Canvas targetCanvas, Observer observer, PositionDto posDto)
     {
         TargetCanvas = targetCanvas;
         Observer = observer;
-        PosDto = posDto;
-        PointSelectController = new SelectController(DefaultValues.SelectPointFillBrush, DefaultValues.SelectPointFillBrush, SetPointBuffer, UnsetPointBuffer);      
+        PosDto = posDto;        
     }
-    public void CreatePoint(double x, double y, double z)
+    public SgePoint CreatePoint(double x, double y, double z)
     {
-        var point = new SgePoint(TargetCanvas, PointFocusController, PointSelectController, Observer, x, y, z, DefaultValues.MinCoordinate, DefaultValues.MaxCoordinate);
+        var point = new SgePoint(TargetCanvas, Observer, SetPointBuffer, UnsetPointBuffer, x, y, z, DefaultValues.MinCoordinate, DefaultValues.MaxCoordinate);
         var ellipse = point.VisibleEllipse;
         Points.Add(ellipse, point);
+        return point;
     }
-    public void SetPointBuffer(object sender) 
+    private void SetPointBuffer(SgePoint sender) 
     {
-        if (sender is Ellipse ellipse && Points.ContainsKey(ellipse)) 
+        if (Points.ContainsKey(sender.VisibleEllipse)) 
         {
-            PointBuffer = Points[ellipse];
+            if(PointBuffer != null)
+                PointBuffer.Unselect();
+            PointBuffer = sender;
             PosDto.X = PointBuffer.RealX;
             PosDto.Y = PointBuffer.RealY;
             PosDto.Z = PointBuffer.RealZ;
             PosDto.IsValid = true;
         }
     }
-    public void UnsetPointBuffer(object sender)
+    private void UnsetPointBuffer(SgePoint sender)
     {
-        if (sender is Ellipse ellipse && Points.ContainsKey(ellipse))
+        if (Points.ContainsKey(sender.VisibleEllipse) && PointBuffer == sender)
         {
-            if(PointBuffer == Points[ellipse])
-                PointBuffer = null;
-            PosDto.X = 0d;
-            PosDto.Y = 0d;
-            PosDto.Z = 0d;
+            PointBuffer = null;
             PosDto.IsValid = false;
         }
+    }
+    public void UnsetPointBuffer()
+    {
+        PointBuffer?.Unselect();
+        PointBuffer = null;
+        PosDto.IsValid = false;
     }
     public void TransferPoint(double x, double y, double z) 
     {
@@ -83,6 +86,5 @@ public class SgePointsViewModel
             return true;
         }
         return false;
-    }
-
+    }   
 }
