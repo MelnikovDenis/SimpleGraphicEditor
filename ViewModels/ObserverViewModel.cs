@@ -14,7 +14,7 @@ namespace SimpleGraphicEditor.ViewModels;
 
 public class ObserverViewModel
 {
-    private static double RotateSpeed { get; set; } = 0.001d;
+    private static double RotateSpeed { get; set; } = 0.01d;
     private Canvas TargetCanvas { get; }
     public DragController ObserverDragController { get; } = null!;
     public Observer Observer { get; } = null!;
@@ -31,6 +31,6 @@ public class ObserverViewModel
     }
     private void OnDrag(object sender, Point delta)
     {
-        Observer.Rotate(delta.Y * RotateSpeed, -delta.X * RotateSpeed);
+        Observer.Rotate(-delta.Y * RotateSpeed, -delta.X * RotateSpeed);
     }
 }

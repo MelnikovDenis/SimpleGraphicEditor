@@ -81,10 +81,14 @@
                             Content="Группировка" 
                             Style="{StaticResource ToolButtonStyle}" 
                             Click="GroupingButtonClick"/>
+                        <Button x:Name="GroupTransferButton" 
+                            Content="Перемещение группы" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="GroupTransferButtonClick"/>
                     </StackPanel>
                 
                 <!--Табличная разметка боковой панели инструментов нижнего уровня-->
-                    <Grid Grid.Row="1" VerticalAlignment="Top" Visibility="{Binding Source={StaticResource Status}, Path=PosBlock1Enabled }">
+                    <Grid Grid.Row="1" VerticalAlignment="Top" Visibility="{Binding Source={StaticResource Status}, Path=PosBlock1Enabled}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />

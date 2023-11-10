@@ -5,6 +5,13 @@ using System.Windows;
 namespace SimpleGraphicEditor.ViewModels;
 public class SgeStatus : INotifyPropertyChanged
 {
+    private static string[] PosButton1Texts { get; } = new string[]
+    {        
+        "Поставить точку",
+        "Переместить точку",
+        "Переместить точку привязки",
+        "Сдвинуть группу"
+    };
     private static string[] ActionMessages { get; } = new string[]
     {
         "Поставить точку",
@@ -12,7 +19,8 @@ public class SgeStatus : INotifyPropertyChanged
         "Указать вторую точку линии",
         "Переместить точку",
         "Удалить точку",
-        "Группировать точки"
+        "Группировать точки",
+        "Сдвинуть группу"
     };
     private string actionMessage = ActionMessages[(int)DefaultAction];
     public string ActionMessage
@@ -24,7 +32,7 @@ public class SgeStatus : INotifyPropertyChanged
             OnPropertyChanged(nameof(ActionMessage));
         }
     }
-    private string posButton1Text = ActionMessages[(int)DefaultAction];
+    private string posButton1Text = PosButton1Texts[0];
     public string PosButton1Text
     {
         get { return posButton1Text; }
@@ -53,7 +61,8 @@ public class SgeStatus : INotifyPropertyChanged
         ChooseLineEndPoint,
         Transfer,
         Delete,
-        Grouping
+        Grouping,
+        GroupTransfer
     }
     private Action currentAction = DefaultAction;
     public Action CurrentAction
@@ -63,8 +72,14 @@ public class SgeStatus : INotifyPropertyChanged
         {
             currentAction = value;
             ActionMessage = ActionMessages[(int)value];
-            if (value == Action.SetSinglePoint || value == Action.Transfer)
-                PosButton1Text = ActionMessages[(int)value];
+            if (value == Action.SetSinglePoint)
+                PosButton1Text = PosButton1Texts[0];
+            else if(value == Action.Transfer)
+                PosButton1Text = PosButton1Texts[1];
+            else if (value == Action.Grouping)
+                PosButton1Text = PosButton1Texts[2];
+             else if (value == Action.GroupTransfer)
+                PosButton1Text = PosButton1Texts[3];
             else
                 PosButton1Text = string.Empty;
         }

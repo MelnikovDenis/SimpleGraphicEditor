@@ -14,6 +14,7 @@ public class SgeMainViewModel
     public SgePointsViewModel PointsViewModel { get; private set; }
     public SgeLinesViewModel LinesViewModel { get; private set; }
     public ObserverViewModel ObserverViewModel { get; private set; }
+    public SgeGroupViewModel GroupViewModel { get => PointsViewModel.GroupViewModel; } 
     public SgeMainViewModel(Canvas targetCanvas, SgeStatus status, PositionDto posDto)
     {
         Status = status;

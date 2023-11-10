@@ -11,12 +11,12 @@ public static class DefaultValues
     public static Brush XAxisBrush { get; } = new SolidColorBrush(Color.FromRgb(0, 255, 0));
     public static Brush YAxisBrush { get; } = new SolidColorBrush(Color.FromRgb(255, 0, 0));
     public static Brush ZAxisBrush { get; } = new SolidColorBrush(Color.FromRgb(255, 0, 255));
-    public static int AxisLineZIndex { get; } = 1;  
+    public static int AxisLineZIndex { get; } = 2;  
     public static double AxisLineLength { get; } = 50d;
     public static double AxisLineThickness { get; } = 1d;
 
     public static Brush DefaultLineBrush { get; } = new SolidColorBrush(Color.FromRgb(47, 48, 52));
-    public static int DefaultLineZIndex { get; } = 2;
+    public static int DefaultLineZIndex { get; } = 1;
     public static double DefaultLineThickness { get; } = 1.5d;
 
     public static Brush DefaultPointFillBrush { get; } = new SolidColorBrush(Color.FromRgb(139, 140, 142));
@@ -34,6 +34,6 @@ public static class DefaultValues
     public static double DefualtBindPointDiameter { get; } = 5d;
 
 
-    public static double MinCoordinate { get; } = -1500;
-    public static double MaxCoordinate { get; } = 1500;    
+    public static double MinCoordinate { get; } = -500;
+    public static double MaxCoordinate { get; } = 500;    
 }

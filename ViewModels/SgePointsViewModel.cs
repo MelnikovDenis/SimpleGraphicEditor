@@ -17,6 +17,7 @@ public class SgePointsViewModel
     private Observer Observer { get; }
     private PositionDto PosDto { get;  }
     public SgePoint? PointBuffer { get; private set; } = null;
+    public SgeGroupViewModel GroupViewModel { get; private set; }
     public Dictionary<Ellipse, SgePoint> Points { get; } = new Dictionary<Ellipse, SgePoint>();
     public bool CanFocus
     {
@@ -33,7 +34,8 @@ public class SgePointsViewModel
     {
         TargetCanvas = targetCanvas;
         Observer = observer;
-        PosDto = posDto;        
+        PosDto = posDto;
+        GroupViewModel = new SgeGroupViewModel(TargetCanvas, Observer, posDto);
     }
     public SgePoint CreatePoint(double x, double y, double z)
     {
@@ -44,7 +46,7 @@ public class SgePointsViewModel
     }
     private void SetPointBuffer(SgePoint sender) 
     {
-        if (Points.ContainsKey(sender.VisibleEllipse)) 
+        if (CanTransfer && Points.ContainsKey(sender.VisibleEllipse)) 
         {
             if(PointBuffer != null)
                 PointBuffer.Unselect();
@@ -54,6 +56,10 @@ public class SgePointsViewModel
             PosDto.Z = PointBuffer.RealZ;
             PosDto.IsValid = true;
         }
+        else if(GroupViewModel.CanGrouping)
+        {
+            GroupViewModel.AddToGroup(sender);
+        }
     }
     private void UnsetPointBuffer(SgePoint sender)
     {
@@ -62,12 +68,16 @@ public class SgePointsViewModel
             PointBuffer = null;
             PosDto.IsValid = false;
         }
+        else if(GroupViewModel.CanGrouping)
+        {
+            GroupViewModel.DeleteFromGroup(sender.VisibleEllipse);
+        }
     }
+    
     public void UnsetPointBuffer()
     {
         PointBuffer?.Unselect();
         PointBuffer = null;
-        PosDto.IsValid = false;
     }
     public void TransferPoint(double x, double y, double z) 
     {

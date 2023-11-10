@@ -30,48 +30,82 @@ public partial class MainWindow : Window
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PointsViewModel.CanTransfer = false;
         MainViewModel.PosDto.IsValid = true;
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = false;
         MainViewModel.LinesViewModel.CanFocus = false;
         MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.SetSinglePoint; 
+        MainViewModel.GroupViewModel.SetInvisible();
         eventArgs.Handled = true; 
     }
     private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
     {
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PointsViewModel.CanTransfer = false;
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
         MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint; 
+        MainViewModel.GroupViewModel.SetInvisible();
+        MainViewModel.GroupViewModel.CanGrouping = false;
         eventArgs.Handled = true; 
     }
     private void DeleteButtonClick(object sender, RoutedEventArgs eventArgs)
     { 
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PointsViewModel.CanTransfer = false;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Delete;
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = true;
         MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.GroupViewModel.SetInvisible();
+        MainViewModel.GroupViewModel.CanGrouping = false;
         eventArgs.Handled = true; 
     }
     private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
-    {        
+    {   
+        MainViewModel.PointsViewModel.UnsetPointBuffer(); 
         MainViewModel.PosDto.IsValid = false;
+        MainViewModel.PointsViewModel.CanTransfer = true;
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
         MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.GroupViewModel.SetInvisible();
+        MainViewModel.GroupViewModel.CanGrouping = false;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Transfer;
         eventArgs.Handled = true; 
     }
     private void GroupingButtonClick(object sender, RoutedEventArgs eventArgs) 
     { 
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.IsValid = true;
+        MainViewModel.PointsViewModel.CanTransfer = false;
+        MainViewModel.PointsViewModel.CanSelect = true;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.GroupViewModel.CanGrouping = true;
+        MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Grouping; 
+        eventArgs.Handled = true; 
+    }
+    private void GroupTransferButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.IsValid = true;
+        MainViewModel.PointsViewModel.CanTransfer = false;
+        MainViewModel.PointsViewModel.CanSelect = true;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.GroupViewModel.CanGrouping = true;
+        MainViewModel.GroupViewModel.SetVisible();
+        MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupTransfer; 
         eventArgs.Handled = true; 
     }
     private void CanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs)
@@ -102,7 +136,7 @@ public partial class MainWindow : Window
     }
     private void PosButton1Click(object sender, RoutedEventArgs eventArgs)
     {
-        switch ( MainViewModel.Status.CurrentAction)
+        switch (MainViewModel.Status.CurrentAction)
         {
             case SgeStatus.Action.Transfer:
                 if (MainViewModel.PosDto.IsValid)
@@ -110,7 +144,15 @@ public partial class MainWindow : Window
                 break;
             case SgeStatus.Action.SetSinglePoint:
                 if (MainViewModel.PosDto.IsValid)
-                    MainViewModel.PointsViewModel.CreatePoint(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);
+                    MainViewModel.PointsViewModel.CreatePoint(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);                    
+                break;
+            case SgeStatus.Action.Grouping:
+                if(MainViewModel.PosDto.IsValid)
+                    MainViewModel.GroupViewModel.TransferBindPoint(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);
+                break;
+             case SgeStatus.Action.GroupTransfer:
+                if(MainViewModel.PosDto.IsValid)
+                    MainViewModel.GroupViewModel.TransferGroup(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);
                 break;
         }
         eventArgs.Handled = true;
@@ -156,11 +198,9 @@ public partial class MainWindow : Window
             {
                 MainViewModel.Reset();
                 MessageBox.Show("Ooops, something went wrong!", "Open error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-           
+            }           
         }
-        eventArgs.Handled = true;
-        
+        eventArgs.Handled = true;        
     }
     private void MenuSaveClick(object sender, RoutedEventArgs eventArgs)
     {
