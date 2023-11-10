@@ -53,8 +53,8 @@
                 <!--Табличная разметка боковой панели инструментов верхнего уровня-->
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
@@ -78,13 +78,21 @@
                             Style="{StaticResource ToolButtonStyle}" 
                             Click="DeleteButtonClick"/>
                         <Button x:Name="GroupingButton" 
-                            Content="Группировка" 
+                            Content="Точка привязки группы" 
                             Style="{StaticResource ToolButtonStyle}" 
                             Click="GroupingButtonClick"/>
                         <Button x:Name="GroupTransferButton" 
                             Content="Перемещение группы" 
                             Style="{StaticResource ToolButtonStyle}" 
                             Click="GroupTransferButtonClick"/>
+                        <Button x:Name="GroupRotateButton" 
+                            Content="Поворот группы" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="GroupRotateButtonClick"/>
+                        <Button x:Name="GroupMirrorButton" 
+                            Content="Зеркалирование группы" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="GroupMirrorButtonClick"/>
                     </StackPanel>
                 
                 <!--Табличная разметка боковой панели инструментов нижнего уровня-->
@@ -143,7 +151,21 @@
                             Click="PosButton1Click"
                             IsEnabled="{Binding Source={StaticResource PosDto}, Path=IsValid}"/>
                     </Grid>
-                </Grid>
+                    <StackPanel Grid.Row="2" VerticalAlignment="Top" Orientation="Vertical" Visibility="{Binding Source={StaticResource Status}, Path=MirrorBlockEnabled}">
+                        <Button x:Name="MirrorXButton" 
+                            Content="Зеркалирование по X" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="MirrorXButtonClick"/>
+                        <Button x:Name="MirrorYButton" 
+                            Content="Зеркалирование по Y" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="MirrorYButtonClick"/>
+                        <Button x:Name="MirrorZButton" 
+                            Content="Зеркалирование по Z" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="MirrorZButtonClick"/>
+                    </StackPanel>
+                </Grid>                
             </Border>
             <!--Холст для рисования-->
             <Canvas x:Name="SgeCanvas"

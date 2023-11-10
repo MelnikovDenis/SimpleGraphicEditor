@@ -90,6 +90,31 @@ public class Point3D : INotifyPropertyChanged
         RealZ = newZ;
         Project();
     }
+    public void Rotate(double sinX, double cosX, double sinY, double cosY, double sinZ, double cosZ)
+    {
+        RealX = cosZ * (RealX * cosY + sinY * (RealY * sinX + RealZ * cosX)) - sinZ * (RealY * cosX - RealZ * sinX);
+        RealY = sinZ * (RealX * cosY + sinY * (RealY * sinX + RealZ * cosX)) + cosZ * (RealY * cosX - RealZ * sinX);
+        RealZ = cosY * (RealY * sinX + RealZ * cosX) - RealX * sinY; 
+        Project();
+    }
+    public void MirrorX()
+    {
+        RealY = -RealY;
+        RealZ = -RealZ;
+        Project();
+    }
+    public void MirrorY()
+    {
+        RealX = -RealX;
+        RealZ = -RealZ;
+        Project();
+    }
+    public void MirrorZ()
+    {
+        RealX = -RealX;
+        RealY = -RealY;
+        Project();        
+    }
     protected virtual void Project()
     {
         var homogeneousCoordinate = RealX * Observer.SinY * Observer.CosX / Observer.ViewPointZ

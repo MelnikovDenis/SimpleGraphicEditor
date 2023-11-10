@@ -29,8 +29,10 @@ public partial class MainWindow : Window
     }
     private void PointButtonClick(object sender, RoutedEventArgs eventArgs)
     {
+        
         MainViewModel.PointsViewModel.UnsetPointBuffer();
         MainViewModel.PointsViewModel.CanTransfer = false;
+        MainViewModel.PosDto.ChangeToCoordinateInput();
         MainViewModel.PosDto.IsValid = true;
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = false;
@@ -43,6 +45,7 @@ public partial class MainWindow : Window
     private void LineButtonClick(object sender, RoutedEventArgs eventArgs)
     {
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.IsValid = false;
         MainViewModel.PointsViewModel.CanTransfer = false;
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
@@ -69,6 +72,7 @@ public partial class MainWindow : Window
     private void DragButtonClick(object sender, RoutedEventArgs eventArgs)
     {   
         MainViewModel.PointsViewModel.UnsetPointBuffer(); 
+        MainViewModel.PosDto.ChangeToCoordinateInput();
         MainViewModel.PosDto.IsValid = false;
         MainViewModel.PointsViewModel.CanTransfer = true;
         MainViewModel.PointsViewModel.CanSelect = true;
@@ -83,7 +87,11 @@ public partial class MainWindow : Window
     private void GroupingButtonClick(object sender, RoutedEventArgs eventArgs) 
     { 
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.ChangeToCoordinateInput();
         MainViewModel.PosDto.IsValid = true;
+        MainViewModel.PosDto.X = MainViewModel.GroupViewModel.BindPoint.RealX;
+        MainViewModel.PosDto.Y = MainViewModel.GroupViewModel.BindPoint.RealY;
+        MainViewModel.PosDto.Z = MainViewModel.GroupViewModel.BindPoint.RealZ;
         MainViewModel.PointsViewModel.CanTransfer = false;
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
@@ -97,6 +105,7 @@ public partial class MainWindow : Window
     private void GroupTransferButtonClick(object sender, RoutedEventArgs eventArgs) 
     { 
         MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.ChangeToCoordinateInput();
         MainViewModel.PosDto.IsValid = true;
         MainViewModel.PointsViewModel.CanTransfer = false;
         MainViewModel.PointsViewModel.CanSelect = true;
@@ -106,6 +115,35 @@ public partial class MainWindow : Window
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupTransfer; 
+        eventArgs.Handled = true; 
+    }
+    private void GroupRotateButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.ChangeToAngleInput();
+        MainViewModel.PosDto.IsValid = true;
+        MainViewModel.PointsViewModel.CanTransfer = false;
+        MainViewModel.PointsViewModel.CanSelect = true;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.GroupViewModel.CanGrouping = true;
+        MainViewModel.GroupViewModel.SetVisible();
+        MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupRotate; 
+        eventArgs.Handled = true; 
+    }
+    private void GroupMirrorButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.PointsViewModel.UnsetPointBuffer();
+        MainViewModel.PosDto.IsValid = false;
+        MainViewModel.PointsViewModel.CanTransfer = false;
+        MainViewModel.PointsViewModel.CanSelect = true;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.GroupViewModel.CanGrouping = true;
+        MainViewModel.GroupViewModel.SetVisible();
+        MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupMirror; 
         eventArgs.Handled = true; 
     }
     private void CanvasLeftMouseDown(object sender, MouseButtonEventArgs eventArgs)
@@ -150,9 +188,21 @@ public partial class MainWindow : Window
                 if(MainViewModel.PosDto.IsValid)
                     MainViewModel.GroupViewModel.TransferBindPoint(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);
                 break;
-             case SgeStatus.Action.GroupTransfer:
+            case SgeStatus.Action.GroupTransfer:
                 if(MainViewModel.PosDto.IsValid)
                     MainViewModel.GroupViewModel.TransferGroup(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);
+                break;
+            case SgeStatus.Action.GroupRotate:
+                if(MainViewModel.PosDto.IsValid)
+                    MainViewModel.GroupViewModel.RotateGroup(
+                        Math.Sin(FromDegree(MainViewModel.PosDto.X)), 
+                        Math.Cos(FromDegree(MainViewModel.PosDto.X)), 
+                        Math.Sin(FromDegree(MainViewModel.PosDto.Y)), 
+                        Math.Cos(FromDegree(MainViewModel.PosDto.Y)), 
+                        Math.Sin(FromDegree(MainViewModel.PosDto.Z)),
+                        Math.Cos(FromDegree(MainViewModel.PosDto.Z))
+                    );
+                    
                 break;
         }
         eventArgs.Handled = true;
@@ -229,5 +279,24 @@ public partial class MainWindow : Window
             }
         }
         eventArgs.Handled = true;
+    }
+    private void MirrorXButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.GroupViewModel.MirrorXGroup();
+        eventArgs.Handled = true; 
+    }
+    private void MirrorYButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.GroupViewModel.MirrorYGroup();
+        eventArgs.Handled = true; 
+    }
+    private void MirrorZButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.GroupViewModel.MirrorZGroup();
+        eventArgs.Handled = true; 
+    }
+    private static double FromDegree(double angle)
+    {
+        return angle * Math.PI / 180d;
     }
 }

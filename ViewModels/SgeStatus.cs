@@ -10,17 +10,20 @@ public class SgeStatus : INotifyPropertyChanged
         "Поставить точку",
         "Переместить точку",
         "Переместить точку привязки",
-        "Сдвинуть группу"
+        "Переместить группу",
+        "Повернуть группу"
     };
     private static string[] ActionMessages { get; } = new string[]
     {
-        "Поставить точку",
+        "Поставить точку (поставить на координаты)",
         "Указать первую точку линии",
         "Указать вторую точку линии",
-        "Переместить точку",
+        "Переместить точку (поставить на координаты)",
         "Удалить точку",
-        "Группировать точки",
-        "Сдвинуть группу"
+        "Установить точку привязки (поставить на координаты)",
+        "Переместить группу (переместить на столько-то)",
+        "Повернуть группу (поворот в градусах)",
+        "Зеркалировать группу"
     };
     private string actionMessage = ActionMessages[(int)DefaultAction];
     public string ActionMessage
@@ -53,6 +56,20 @@ public class SgeStatus : INotifyPropertyChanged
                 return Visibility.Collapsed;
         }  
     }
+    private Visibility mirrorBlockEnabled = Visibility.Collapsed;
+    public Visibility MirrorBlockEnabled 
+    {
+        get 
+        {
+            return mirrorBlockEnabled;
+
+        }
+        set
+        {
+            mirrorBlockEnabled = value;
+            OnPropertyChanged(nameof(MirrorBlockEnabled));
+        }
+    }
     private static Action DefaultAction { get; } = Action.SetSinglePoint;
     public enum Action
     {
@@ -62,7 +79,9 @@ public class SgeStatus : INotifyPropertyChanged
         Transfer,
         Delete,
         Grouping,
-        GroupTransfer
+        GroupTransfer,
+        GroupRotate,
+        GroupMirror
     }
     private Action currentAction = DefaultAction;
     public Action CurrentAction
@@ -72,14 +91,20 @@ public class SgeStatus : INotifyPropertyChanged
         {
             currentAction = value;
             ActionMessage = ActionMessages[(int)value];
+            if(value == Action.GroupMirror)
+                MirrorBlockEnabled = Visibility.Visible;
+            else
+                MirrorBlockEnabled = Visibility.Collapsed;
             if (value == Action.SetSinglePoint)
                 PosButton1Text = PosButton1Texts[0];
             else if(value == Action.Transfer)
                 PosButton1Text = PosButton1Texts[1];
             else if (value == Action.Grouping)
                 PosButton1Text = PosButton1Texts[2];
-             else if (value == Action.GroupTransfer)
+            else if (value == Action.GroupTransfer)
                 PosButton1Text = PosButton1Texts[3];
+            else if (value == Action.GroupRotate)
+                PosButton1Text = PosButton1Texts[4];
             else
                 PosButton1Text = string.Empty;
         }

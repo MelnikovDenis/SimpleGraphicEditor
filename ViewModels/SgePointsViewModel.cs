@@ -92,6 +92,7 @@ public class SgePointsViewModel
             foreach(var line in lines)
                 linesViewModel.RemoveLine(line);
             point.Remove();
+            GroupViewModel.Group.Remove(ellipse);
             Points.Remove(ellipse);
             return true;
         }

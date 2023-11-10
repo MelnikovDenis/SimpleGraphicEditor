@@ -17,15 +17,24 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
         get => !Errors.Values.Any(x => x != string.Empty) && isValid; 
         set 
         { 
-            if(!value)
-            {
-                X = 0d;
-                Y = 0d;
-                Z = 0d;
-            }
+            X = 0d;
+            Y = 0d;
+            Z = 0d;
             isValid = value; 
             OnPropertyChanged(nameof(IsValid)); 
         } 
+    }
+    public double Min { get; private set; } = DefaultValues.MinCoordinate; 
+    public double Max { get; private set; } = DefaultValues.MaxCoordinate;
+    public void ChangeToAngleInput()
+    {
+        Min = -180d;
+        Max = 180d;
+    }
+    public void ChangeToCoordinateInput()
+    {
+        Min = DefaultValues.MinCoordinate; 
+        Max = DefaultValues.MaxCoordinate; 
     }
     public string Error
     {
@@ -41,8 +50,8 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
         {
             x = value;
             OnPropertyChanged(nameof(X));
-            if (value < DefaultValues.MinCoordinate || value > DefaultValues.MaxCoordinate) 
-                Errors[nameof(X)] = $"{nameof(X)} must be in range [{DefaultValues.MinCoordinate}, {DefaultValues.MaxCoordinate}].";                
+            if (value < Min || value > Max) 
+                Errors[nameof(X)] = $"{nameof(X)} must be in range [{Min}, {Max}].";                
             else 
                 Errors[nameof(X)] = string.Empty;
             OnPropertyChanged(nameof(IsValid));
@@ -55,8 +64,8 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
         {
             y = value;
             OnPropertyChanged(nameof(Y));
-            if (value < DefaultValues.MinCoordinate || value > DefaultValues.MaxCoordinate)             
-                Errors[nameof(Y)] = $"{nameof(Y)} must be in range [{DefaultValues.MinCoordinate}, {DefaultValues.MaxCoordinate}].";
+            if (value < Min || value > Max)             
+                Errors[nameof(Y)] = $"{nameof(Y)} must be in range [{Min}, {Max}].";
             else              
                 Errors[nameof(Y)] = string.Empty;
             OnPropertyChanged(nameof(IsValid));
@@ -69,8 +78,8 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
         {
             z = value;
             OnPropertyChanged(nameof(Z));
-            if (value < DefaultValues.MinCoordinate || value > DefaultValues.MaxCoordinate)
-                Errors[nameof(Z)] = $"{nameof(Z)} must be in range [{DefaultValues.MinCoordinate}, {DefaultValues.MaxCoordinate}].";
+            if (value < Min || value > Max)
+                Errors[nameof(Z)] = $"{nameof(Z)} must be in range [{Min}, {Max}].";
             else                
                 Errors[nameof(Z)] = string.Empty;
             OnPropertyChanged(nameof(IsValid));

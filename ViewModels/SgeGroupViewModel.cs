@@ -13,7 +13,7 @@ public class SgeGroupViewModel
     private Canvas TargetCanvas { get; set; }
     private Observer Observer { get; set; }
     public Dictionary<Ellipse, SgePoint> Group { get; } = new Dictionary<Ellipse, SgePoint>();
-    private BindPoint BindPoint { get; }
+    public BindPoint BindPoint { get; }
     public SgeGroupViewModel(Canvas targetCanvas, Observer observer, PositionDto posDto)
     {
         TargetCanvas = targetCanvas;
@@ -24,6 +24,42 @@ public class SgeGroupViewModel
     {
         if(!Group.ContainsKey(point.VisibleEllipse))
             Group.Add(point.VisibleEllipse, point);
+    }
+    public void MirrorXGroup()
+    {
+        foreach(var point in Group.Values)
+        {
+            point.Move(-BindPoint.RealX, -BindPoint.RealY, -BindPoint.RealZ);
+            point.MirrorX();
+            point.Move(BindPoint.RealX, BindPoint.RealY, BindPoint.RealZ);
+        }            
+    }
+    public void MirrorYGroup()
+    {
+        foreach(var point in Group.Values)
+        {
+            point.Move(-BindPoint.RealX, -BindPoint.RealY, -BindPoint.RealZ);
+            point.MirrorY();
+            point.Move(BindPoint.RealX, BindPoint.RealY, BindPoint.RealZ);
+        }           
+    }
+    public void MirrorZGroup()
+    {
+        foreach(var point in Group.Values)
+        {
+            point.Move(-BindPoint.RealX, -BindPoint.RealY, -BindPoint.RealZ);
+            point.MirrorZ();
+            point.Move(BindPoint.RealX, BindPoint.RealY, BindPoint.RealZ);
+        }            
+    }
+    public void RotateGroup(double sinX, double cosX, double sinY, double cosY, double sinZ, double cosZ)
+    {
+        foreach(var point in Group.Values)
+        {
+            point.Move(-BindPoint.RealX, -BindPoint.RealY, -BindPoint.RealZ);
+            point.Rotate(sinX, cosX, sinY, cosY, sinZ, cosZ);
+            point.Move(BindPoint.RealX, BindPoint.RealY, BindPoint.RealZ);
+        }
     }
     public void DeleteFromGroup(Ellipse visibleEllipse)
     {
@@ -39,7 +75,7 @@ public class SgeGroupViewModel
     }
     public void TransferBindPoint(double x, double y, double z)
     {
-        BindPoint.Move(x, y, z);
+        BindPoint.SetCoordinates(x, y, z);
     }
     public void SetInvisible()
     {
