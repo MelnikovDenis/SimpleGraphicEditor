@@ -92,9 +92,20 @@ public class Point3D : INotifyPropertyChanged
     }
     public void Rotate(double sinX, double cosX, double sinY, double cosY, double sinZ, double cosZ)
     {
-        RealX = cosZ * (RealX * cosY + sinY * (RealY * sinX + RealZ * cosX)) - sinZ * (RealY * cosX - RealZ * sinX);
-        RealY = sinZ * (RealX * cosY + sinY * (RealY * sinX + RealZ * cosX)) + cosZ * (RealY * cosX - RealZ * sinX);
-        RealZ = cosY * (RealY * sinX + RealZ * cosX) - RealX * sinY; 
+        var oldX = RealX;
+        var oldY = RealY;
+        var oldZ = RealZ;
+        RealX = cosZ * (oldX * cosY + sinY * (oldY * sinX + oldZ * cosX)) - sinZ * (oldY * cosX - oldZ * sinX);
+        RealY = sinZ * (oldX * cosY + sinY * (oldY * sinX + oldZ * cosX)) + cosZ * (oldY * cosX - oldZ * sinX);
+        RealZ = cosY * (oldY * sinX + oldZ * cosX) - oldX * sinY; 
+        Project();
+    }
+
+    public void Scale(double scaleX, double scaleY, double scaleZ)
+    {
+        RealX *= scaleX;
+        RealY *= scaleY;
+        RealZ *= scaleZ;
         Project();
     }
     public void MirrorX()

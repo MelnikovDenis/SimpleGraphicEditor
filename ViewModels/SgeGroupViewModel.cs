@@ -61,6 +61,15 @@ public class SgeGroupViewModel
             point.Move(BindPoint.RealX, BindPoint.RealY, BindPoint.RealZ);
         }
     }
+     public void ScaleGroup(double scaleX, double scaleY, double scaleZ)
+    {
+        foreach(var point in Group.Values)
+        {
+            point.Move(-BindPoint.RealX, -BindPoint.RealY, -BindPoint.RealZ);
+            point.Scale(scaleX, scaleY, scaleZ);
+            point.Move(BindPoint.RealX, BindPoint.RealY, BindPoint.RealZ);
+        }
+    }
     public void DeleteFromGroup(Ellipse visibleEllipse)
     {
         if(Group.ContainsKey(visibleEllipse))

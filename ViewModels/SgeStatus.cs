@@ -11,7 +11,8 @@ public class SgeStatus : INotifyPropertyChanged
         "Переместить точку",
         "Переместить точку привязки",
         "Переместить группу",
-        "Повернуть группу"
+        "Повернуть группу",
+        "Увеличить группу"
     };
     private static string[] ActionMessages { get; } = new string[]
     {
@@ -23,7 +24,8 @@ public class SgeStatus : INotifyPropertyChanged
         "Установить точку привязки (поставить на координаты)",
         "Переместить группу (переместить на столько-то)",
         "Повернуть группу (поворот в градусах)",
-        "Зеркалировать группу"
+        "Зеркалировать группу",
+        "Увеличить группу"
     };
     private string actionMessage = ActionMessages[(int)DefaultAction];
     public string ActionMessage
@@ -81,7 +83,8 @@ public class SgeStatus : INotifyPropertyChanged
         Grouping,
         GroupTransfer,
         GroupRotate,
-        GroupMirror
+        GroupMirror,
+        GroupScale
     }
     private Action currentAction = DefaultAction;
     public Action CurrentAction
@@ -105,6 +108,8 @@ public class SgeStatus : INotifyPropertyChanged
                 PosButton1Text = PosButton1Texts[3];
             else if (value == Action.GroupRotate)
                 PosButton1Text = PosButton1Texts[4];
+            else if (value == Action.GroupScale)
+                PosButton1Text = PosButton1Texts[5];
             else
                 PosButton1Text = string.Empty;
         }

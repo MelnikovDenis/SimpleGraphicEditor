@@ -50,7 +50,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint; 
         MainViewModel.GroupViewModel.SetInvisible();
         MainViewModel.GroupViewModel.CanGrouping = false;
@@ -64,7 +64,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = true;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.GroupViewModel.SetInvisible();
         MainViewModel.GroupViewModel.CanGrouping = false;
         eventArgs.Handled = true; 
@@ -78,7 +78,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.GroupViewModel.SetInvisible();
         MainViewModel.GroupViewModel.CanGrouping = false;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Transfer;
@@ -96,7 +96,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Grouping; 
@@ -111,7 +111,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupTransfer; 
@@ -126,10 +126,25 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupRotate; 
+        eventArgs.Handled = true; 
+    }
+    private void GroupScaleButtonClick(object sender, RoutedEventArgs eventArgs) 
+    { 
+        MainViewModel.PointsViewModel.UnsetPointBuffer();        
+        MainViewModel.PosDto.ChangeToScaleInput();
+        MainViewModel.PosDto.IsValid = true;
+        MainViewModel.PointsViewModel.CanTransfer = false;
+        MainViewModel.PointsViewModel.CanSelect = true;
+        MainViewModel.PointsViewModel.CanFocus = true;
+        MainViewModel.LinesViewModel.CanFocus = false;
+        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.GroupViewModel.CanGrouping = true;
+        MainViewModel.GroupViewModel.SetVisible();
+        MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupScale; 
         eventArgs.Handled = true; 
     }
     private void GroupMirrorButtonClick(object sender, RoutedEventArgs eventArgs) 
@@ -169,7 +184,7 @@ public partial class MainWindow : Window
                 {
                     eventArgs.Handled = true;
                 }              
-                break;
+                break;            
         }
     }
     private void PosButton1Click(object sender, RoutedEventArgs eventArgs)
@@ -201,8 +216,11 @@ public partial class MainWindow : Window
                         Math.Cos(FromDegree(MainViewModel.PosDto.Y)), 
                         Math.Sin(FromDegree(MainViewModel.PosDto.Z)),
                         Math.Cos(FromDegree(MainViewModel.PosDto.Z))
-                    );
-                    
+                    );                
+                break;
+             case SgeStatus.Action.GroupScale:
+                if(MainViewModel.PosDto.IsValid)
+                    MainViewModel.GroupViewModel.ScaleGroup(MainViewModel.PosDto.X, MainViewModel.PosDto.Y, MainViewModel.PosDto.Z);
                 break;
         }
         eventArgs.Handled = true;

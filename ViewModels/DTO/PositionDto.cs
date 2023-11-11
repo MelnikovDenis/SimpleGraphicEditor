@@ -17,9 +17,6 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
         get => !Errors.Values.Any(x => x != string.Empty) && isValid; 
         set 
         { 
-            X = 0d;
-            Y = 0d;
-            Z = 0d;
             isValid = value; 
             OnPropertyChanged(nameof(IsValid)); 
         } 
@@ -30,11 +27,25 @@ public class PositionDto : IDataErrorInfo, INotifyPropertyChanged
     {
         Min = -180d;
         Max = 180d;
+        X = 0d;
+        Y = 0d;
+        Z = 0d;       
+    }
+    public void ChangeToScaleInput()
+    {
+        Min = 0.01d;
+        Max = 100d;
+        X = 1d;
+        Y = 1d;
+        Z = 1d;       
     }
     public void ChangeToCoordinateInput()
     {
         Min = DefaultValues.MinCoordinate; 
         Max = DefaultValues.MaxCoordinate; 
+        X = 0d;
+        Y = 0d;
+        Z = 0d;        
     }
     public string Error
     {

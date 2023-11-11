@@ -89,10 +89,14 @@
                             Content="Поворот группы" 
                             Style="{StaticResource ToolButtonStyle}" 
                             Click="GroupRotateButtonClick"/>
+                        <Button x:Name="GroupScaleButton" 
+                            Content="Увеличение группы" 
+                            Style="{StaticResource ToolButtonStyle}" 
+                            Click="GroupScaleButtonClick"/>
                         <Button x:Name="GroupMirrorButton" 
                             Content="Зеркалирование группы" 
                             Style="{StaticResource ToolButtonStyle}" 
-                            Click="GroupMirrorButtonClick"/>
+                            Click="GroupMirrorButtonClick"/>                        
                     </StackPanel>
                 
                 <!--Табличная разметка боковой панели инструментов нижнего уровня-->
@@ -113,7 +117,8 @@
                             <TextBox.Text>
                                 <Binding Path="X" Source="{StaticResource PosDto}"
                                     ValidatesOnExceptions="True"
-                                    UpdateSourceTrigger="PropertyChanged">
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    StringFormat="N2">
                                     <Binding.ValidationRules>
                                         <DataErrorValidationRule/>
                                     </Binding.ValidationRules>
@@ -125,7 +130,8 @@
                             <TextBox.Text>
                                 <Binding Path="Y" Source="{StaticResource PosDto}"
                                     ValidatesOnExceptions="True"
-                                    UpdateSourceTrigger="PropertyChanged">
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    StringFormat="N2">
                                     <Binding.ValidationRules>
                                         <DataErrorValidationRule/>
                                     </Binding.ValidationRules>
@@ -137,7 +143,8 @@
                             <TextBox.Text>
                                 <Binding Path="Z" Source="{StaticResource PosDto}"
                                     ValidatesOnExceptions="True"
-                                    UpdateSourceTrigger="PropertyChanged">
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    StringFormat="N2">  
                                     <Binding.ValidationRules>
                                         <DataErrorValidationRule/>
                                     </Binding.ValidationRules>

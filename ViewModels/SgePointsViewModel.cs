@@ -50,11 +50,11 @@ public class SgePointsViewModel
         {
             if(PointBuffer != null)
                 PointBuffer.Unselect();
-            PointBuffer = sender;
+            PointBuffer = sender;            
+            PosDto.IsValid = true;
             PosDto.X = PointBuffer.RealX;
             PosDto.Y = PointBuffer.RealY;
             PosDto.Z = PointBuffer.RealZ;
-            PosDto.IsValid = true;
         }
         else if(GroupViewModel.CanGrouping)
         {
@@ -67,6 +67,9 @@ public class SgePointsViewModel
         {
             PointBuffer = null;
             PosDto.IsValid = false;
+            PosDto.X = 0d;
+            PosDto.Y = 0d;
+            PosDto.Z = 0d;
         }
         else if(GroupViewModel.CanGrouping)
         {

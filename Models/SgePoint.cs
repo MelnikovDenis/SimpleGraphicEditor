@@ -45,6 +45,7 @@ public class SgePoint : VisiblePoint3D
         VisibleEllipse.MouseLeave -= OnMouseLeaveHandler;
         VisibleEllipse.MouseLeftButtonDown -= LeftMouseClickHandler;
         VisibleEllipse.MouseRightButtonDown -= RightMouseClickHandler;
+        VisibleEllipse.MouseLeftButtonUp -= MouseLeftButtonUpHandler; 
         BindingOperations.ClearAllBindings(VisibleEllipse);
         TargetCanvas.Children.Remove(VisibleEllipse);
         VisibleEllipse = null!;
@@ -84,6 +85,13 @@ public class SgePoint : VisiblePoint3D
             eventArgs.Handled = true;
         }
     }
+    public void MouseLeftButtonUpHandler(object sender, MouseButtonEventArgs eventArgs)
+    {
+        if (CanSelect)
+        {
+            eventArgs.Handled = true;
+        }
+    } 
     private void RightMouseClickHandler(object sender, MouseEventArgs eventArgs)
     {
         if (CanSelect)

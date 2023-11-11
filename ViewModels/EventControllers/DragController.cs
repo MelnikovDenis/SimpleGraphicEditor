@@ -21,7 +21,7 @@ public class DragController
     }
     public void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs eventArgs)
     {
-        if (sender is UIElement draggable && CanDragging)
+        if(sender is UIElement draggable && CanDragging)
         {
             if(NeedCaptureMouse)
                 draggable.CaptureMouse();
@@ -30,7 +30,7 @@ public class DragController
             IsDragging = true;
             eventArgs.Handled = true;
         }
-    }
+    }    
     public void MouseMoveHandler(object sender, MouseEventArgs eventArgs)
     {
         if (CanDragging &&

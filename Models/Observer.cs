@@ -9,8 +9,8 @@ using System.Windows.Media;
 namespace SimpleGraphicEditor.Models;
 public class Observer
 {    
-    private static double MinViewPointZ { get; set; } = 501d;
-    private static double MaxViewPointZ { get; set; } = 2004d; 
+    private static double MinViewPointZ { get; set; } = 1000d;
+    private static double MaxViewPointZ { get; set; } = 4000d; 
     private static double MinScale { get; set; } = 1d;
     private static double MaxScale { get; set; } = 4d;
     private static double Ratio { get => MaxViewPointZ / MaxScale; }
