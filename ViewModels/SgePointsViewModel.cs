@@ -48,7 +48,7 @@ public class SgePointsViewModel
     {
         if (CanTransfer && Points.ContainsKey(sender.VisibleEllipse)) 
         {
-            if(PointBuffer != null)
+            if(PointBuffer != null && PointBuffer != sender)
                 PointBuffer.Unselect();
             PointBuffer = sender;            
             PosDto.IsValid = true;
