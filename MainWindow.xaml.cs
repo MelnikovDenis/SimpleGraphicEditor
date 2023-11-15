@@ -155,7 +155,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = true;
+        MainViewModel.ObserverViewModel.CanDragging = false;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupMirror; 

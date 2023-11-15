@@ -62,7 +62,7 @@
                     <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top">
                         <TextBlock Text="Панель инструментов" VerticalAlignment="Center" />
                         <Button x:Name="PointButton" 
-                            Content="Точка" 
+                            Content="Точка и вращение" 
                             Style="{StaticResource ToolButtonStyle}" 
                             Click="PointButtonClick"/>
                         <Button x:Name="LineButton" 
