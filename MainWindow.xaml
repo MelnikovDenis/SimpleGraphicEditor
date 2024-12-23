@@ -7,9 +7,9 @@
         xmlns:local="clr-namespace:SimpleGraphicEditor.ViewModels"
         xmlns:dto="clr-namespace:SimpleGraphicEditor.ViewModels.DTO"
         mc:Ignorable="d"       
-        Title="SimpleGraphicEditor" 
-        MinHeight="480" 
-        MinWidth="720"
+        Title="GraphicEditor" 
+        MinHeight="720" 
+        MinWidth="1080"
         Loaded="OnLoad"
         Width="{Binding ElementName=SgeWindow, Path=MinWidth}"
         Height="{Binding ElementName=SgeWindow, Path=MinHeight}">
@@ -26,169 +26,183 @@
         </Grid.RowDefinitions>
         <!--Верхняя панель с инструментами-->
         <Border Grid.Row="0" 
-                BorderThickness="0,0,0,2" 
-                BorderBrush="Black" 
-                Background="Gray"
-                Panel.ZIndex="4">
-            <Menu Height="20" VerticalAlignment="Top" Background="Gray">
-                <MenuItem Header="Файл">
-                    <MenuItem Header="Открыть" Click="MenuOpenClick"></MenuItem>
-                    <MenuItem Header="Сохранить" Click="MenuSaveClick"></MenuItem>
-                </MenuItem>
-            </Menu>
+        BorderThickness="0,0,0,2" 
+        BorderBrush="#45374E" 
+        Background="#D4C4A9"
+        Panel.ZIndex="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Для Menu -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Для заполнения пространства -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Для TextBlock -->
+                </Grid.ColumnDefinitions>
+
+                <Menu Grid.Column="0" Height="20" VerticalAlignment="Top" Background="#998BA5">
+                    <MenuItem Header="Файл">
+                        <MenuItem Header="Открыть" Click="MenuOpenClick"></MenuItem>
+                        <MenuItem Header="Сохранить" Click="MenuSaveClick"></MenuItem>
+                    </MenuItem>
+                </Menu>
+
+                <TextBlock x:Name="StatusTextBlock"
+                   Margin="4"
+                   Grid.Column="2" 
+                   Text="{Binding Source={StaticResource Status}, Path=ActionMessage}" 
+                   VerticalAlignment="Top" 
+                   HorizontalAlignment="Right" FontFamily="Verdana" FontWeight="Bold" FontStyle="Italic"/>
+            </Grid>
         </Border>
-        <!--Табличная разметка боковой панели инструментов и канваса верхнего уровня-->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Border 
-                x:Name="AdditionalToolBar"
-                Grid.Column="0"
-                BorderThickness="0,0,2,0" 
-                BorderBrush="Black" 
-                Background="Gray"
-                Panel.ZIndex="4">
-                <!--Табличная разметка боковой панели инструментов верхнего уровня-->
-                <Grid>
+
+        <!--Холст для рисования-->
+        <Canvas x:Name="SgeCanvas"
+            MouseLeftButtonDown="CanvasLeftMouseDown"                
+            Background="White" Grid.Row="1"/>
+
+        <Border x:Name="AdditionalToolBar"
+            Grid.Row="2"
+            BorderThickness="0,2,0,0" 
+            BorderBrush="#45374E" 
+            Background="#D4C4A9"
+            Panel.ZIndex="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Bottom">
+                    <TextBlock Text="Панель инструментов" 
+                               Margin="4"
+                               HorizontalAlignment="Center" 
+                               FontFamily="Verdana" 
+                               FontWeight="Bold" />
+                    <Button x:Name="PointButton" 
+                        Content="Точка" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="PointButtonClick"/>
+                    <Button x:Name="LineButton" 
+                        Content="Линия" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="LineButtonClick"/>
+                    <Button x:Name="DragButton" 
+                        Content="Перемещение" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="DragButtonClick"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Bottom">
+                    <Button x:Name="DeleteButton" 
+                        Content="Удаление" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="DeleteButtonClick"/>
+                    <Button x:Name="GroupingButton" 
+                        Content="Точка привязки группы" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="GroupingButtonClick"/>
+                    <Button x:Name="GroupTransferButton" 
+                        Content="Перемещение группы" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="GroupTransferButtonClick"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Bottom">
+                    <Button x:Name="GroupRotateButton" 
+                        Content="Поворот группы" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="GroupRotateButtonClick"/>
+                    <Button x:Name="GroupScaleButton" 
+                        Content="Увеличение группы" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="GroupScaleButtonClick"/>
+                    <Button x:Name="GroupMirrorButton" 
+                        Content="Зеркалирование группы" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="GroupMirrorButtonClick"/>
+                </StackPanel>
+
+                <!--Табличная разметка нижней панели инструментов правого уровня-->
+                <Grid Grid.Column="3" 
+                      VerticalAlignment="Bottom" 
+                      Visibility="{Binding Source={StaticResource Status}, Path=PosBlock1Enabled}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    
-                    <!--Кнопки верхней панели инструментов-->
-                    <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top">
-                        <TextBlock Text="Панель инструментов" VerticalAlignment="Center" />
-                        <Button x:Name="PointButton" 
-                            Content="Точка и вращение" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="PointButtonClick"/>
-                        <Button x:Name="LineButton" 
-                            Content="Линия" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="LineButtonClick"/>
-                        <Button x:Name="DragButton" 
-                            Content="Перемещение" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="DragButtonClick"/>
-                        <Button x:Name="DeleteButton" 
-                            Content="Удаление" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="DeleteButtonClick"/>
-                        <Button x:Name="GroupingButton" 
-                            Content="Точка привязки группы" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="GroupingButtonClick"/>
-                        <Button x:Name="GroupTransferButton" 
-                            Content="Перемещение группы" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="GroupTransferButtonClick"/>
-                        <Button x:Name="GroupRotateButton" 
-                            Content="Поворот группы" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="GroupRotateButtonClick"/>
-                        <Button x:Name="GroupScaleButton" 
-                            Content="Увеличение группы" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="GroupScaleButtonClick"/>
-                        <Button x:Name="GroupMirrorButton" 
-                            Content="Зеркалирование группы" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="GroupMirrorButtonClick"/>                        
-                    </StackPanel>
-                
-                <!--Табличная разметка боковой панели инструментов нижнего уровня-->
-                    <Grid Grid.Row="1" VerticalAlignment="Top" Visibility="{Binding Source={StaticResource Status}, Path=PosBlock1Enabled}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <!--Элементы боковой панели инструментов-->
-                        <TextBlock  Grid.Row="0" Grid.Column="0" Text="X" Style="{StaticResource ToolTextBlockStyle}" />
-                        <TextBox  Grid.Row="0" Grid.Column="1" Style="{StaticResource ToolTextBoxStyle}">
-                            <TextBox.Text>
-                                <Binding Path="X" Source="{StaticResource PosDto}"
-                                    ValidatesOnExceptions="True"
-                                    UpdateSourceTrigger="PropertyChanged"
-                                    StringFormat="N2">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                        <TextBlock  Grid.Row="1" Grid.Column="0" Text="Y" Style="{StaticResource ToolTextBlockStyle}"/>
-                        <TextBox  Grid.Row="1" Grid.Column="1" Style="{StaticResource ToolTextBoxStyle}">
-                            <TextBox.Text>
-                                <Binding Path="Y" Source="{StaticResource PosDto}"
-                                    ValidatesOnExceptions="True"
-                                    UpdateSourceTrigger="PropertyChanged"
-                                    StringFormat="N2">
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                        <TextBlock  Grid.Row="2" Grid.Column="0" Text="Z" Style="{StaticResource ToolTextBlockStyle}"/>
-                        <TextBox  Grid.Row="2" Grid.Column="1" Style="{StaticResource ToolTextBoxStyle}">
-                            <TextBox.Text>
-                                <Binding Path="Z" Source="{StaticResource PosDto}"
-                                    ValidatesOnExceptions="True"
-                                    UpdateSourceTrigger="PropertyChanged"
-                                    StringFormat="N2">  
-                                    <Binding.ValidationRules>
-                                        <DataErrorValidationRule/>
-                                    </Binding.ValidationRules>
-                                </Binding>
-                            </TextBox.Text>
-                        </TextBox>
-                        <Button Grid.Row="3" Grid.ColumnSpan="2"
-                            x:Name="PosButton1"
-                            Content="{Binding Source={StaticResource Status}, Path=PosButton1Text}" 
-                            Style="{StaticResource ToolButtonStyle}"
-                            Click="PosButton1Click"
-                            IsEnabled="{Binding Source={StaticResource PosDto}, Path=IsValid}"/>
-                    </Grid>
-                    <StackPanel Grid.Row="2" VerticalAlignment="Top" Orientation="Vertical" Visibility="{Binding Source={StaticResource Status}, Path=MirrorBlockEnabled}">
-                        <Button x:Name="MirrorXButton" 
-                            Content="Зеркалирование по X" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="MirrorXButtonClick"/>
-                        <Button x:Name="MirrorYButton" 
-                            Content="Зеркалирование по Y" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="MirrorYButtonClick"/>
-                        <Button x:Name="MirrorZButton" 
-                            Content="Зеркалирование по Z" 
-                            Style="{StaticResource ToolButtonStyle}" 
-                            Click="MirrorZButtonClick"/>
-                    </StackPanel>
-                </Grid>                
-            </Border>
-            <!--Холст для рисования-->
-            <Canvas x:Name="SgeCanvas"
-                MouseLeftButtonDown="CanvasLeftMouseDown"                
-                Background="White" Grid.Column="1"/>
-        </Grid>
-        <!--Статусная строка-->
-        <Border Grid.Row="2"
-                BorderThickness="0,2,0,0" 
-                BorderBrush="Black" 
-                Background="Gray"
-                Panel.ZIndex="4" 
-                >
-            <TextBlock  x:Name="StatusTextBlock" 
-                        Text="{Binding Source={StaticResource Status}, Path=ActionMessage}" />
+                    <!--Элементы нижней панели инструментов-->
+                    <TextBlock  Grid.Row="0" Grid.Column="0" Text="X" Style="{StaticResource ToolTextBlockStyle}" />
+                    <TextBox  Grid.Row="0" Grid.Column="1" Style="{StaticResource ToolTextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="X" Source="{StaticResource PosDto}"
+                                ValidatesOnExceptions="True"
+                                UpdateSourceTrigger="PropertyChanged"
+                                StringFormat="N2">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock  Grid.Row="1" Grid.Column="0" Text="Y" Style="{StaticResource ToolTextBlockStyle}"/>
+                    <TextBox  Grid.Row="1" Grid.Column="1" Style="{StaticResource ToolTextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="Y" Source="{StaticResource PosDto}"
+                                ValidatesOnExceptions="True"
+                                UpdateSourceTrigger="PropertyChanged"
+                                StringFormat="N2">
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock  Grid.Row="2" Grid.Column="0" Text="Z" Style="{StaticResource ToolTextBlockStyle}"/>
+                    <TextBox  Grid.Row="2" Grid.Column="1" Style="{StaticResource ToolTextBoxStyle}">
+                        <TextBox.Text>
+                            <Binding Path="Z" Source="{StaticResource PosDto}"
+                                ValidatesOnExceptions="True"
+                                UpdateSourceTrigger="PropertyChanged"
+                                StringFormat="N2">  
+                                <Binding.ValidationRules>
+                                    <DataErrorValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Button Grid.Row="3" Grid.ColumnSpan="2"
+                        x:Name="PosButton1"
+                        Content="{Binding Source={StaticResource Status}, Path=PosButton1Text}" 
+                        Style="{StaticResource ToolButtonStyle}"
+                        Click="PosButton1Click"
+                        IsEnabled="{Binding Source={StaticResource PosDto}, Path=IsValid}"/>    
+                </Grid>
+                <StackPanel Grid.Column="3" VerticalAlignment="Bottom" 
+                            Orientation="Vertical" 
+                            Visibility="{Binding Source={StaticResource Status}, Path=MirrorBlockEnabled}">
+                    <Button x:Name="MirrorXButton" 
+                        Content="Зеркалирование по X" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="MirrorXButtonClick"/>
+                    <Button x:Name="MirrorYButton" 
+                        Content="Зеркалирование по Y" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="MirrorYButtonClick"/>
+                    <Button x:Name="MirrorZButton" 
+                        Content="Зеркалирование по Z" 
+                        Style="{StaticResource ToolButtonStyle}" 
+                        Click="MirrorZButtonClick"/>
+                </StackPanel>
+            </Grid>
         </Border>
-
     </Grid>
 </Window>

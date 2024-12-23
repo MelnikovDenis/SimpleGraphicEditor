@@ -16,7 +16,11 @@ public class SgePoint : VisiblePoint3D
     public bool IsSelected { get; private set; } = false;
     public event Action<SgePoint> OnSelect;
     public event Action<SgePoint> OnUnselect;
-    public SgePoint(Canvas targetCanvas, Observer observer, Action<SgePoint> onSelect, Action<SgePoint> onUnselect, double realX, double realY, double realZ, double minCoordinate, double maxCoordinate) 
+    public SgePoint(Canvas targetCanvas, 
+        Observer observer, 
+        Action<SgePoint> onSelect, 
+        Action<SgePoint> onUnselect, 
+        double realX, double realY, double realZ, double minCoordinate, double maxCoordinate) 
         : base(realX, realY, realZ, minCoordinate, maxCoordinate, observer, targetCanvas)
     {
         OnSelect = onSelect;

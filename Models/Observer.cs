@@ -2,17 +2,16 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Diagnostics;
 using SimpleGraphicEditor.ViewModels.EventControllers;
 using System.Windows.Media;
 
 namespace SimpleGraphicEditor.Models;
 public class Observer
 {    
-    private static double MinViewPointZ { get; set; } = 900d;
-    private static double MaxViewPointZ { get; set; } = 3600d; 
+    private static double MinViewPointZ { get; set; } = 200d;
+    private static double MaxViewPointZ { get; set; } = 600d; 
     private static double MinScale { get; set; } = 1d;
-    private static double MaxScale { get; set; } = 4d;
+    private static double MaxScale { get; set; } = 3d;
     private static double Ratio { get => MaxViewPointZ / MaxScale; }
     private Canvas TargetCanvas {get; set; }
     private ScaleTransform ScaleTransf {get; set; }
@@ -114,7 +113,7 @@ public class Observer
         ScaleTransf.CenterX = TargetCanvas.ActualWidth / 2d;
         ScaleTransf.CenterY = TargetCanvas.ActualHeight / 2d;
         ScaleCoef += eventArgs.Delta / Ratio;
-        ViewPointZ += eventArgs.Delta;
+        ViewPointZ -= eventArgs.Delta;
         OnRotateEvent?.Invoke();
     }
     private void OnSizeChanged(object sender, SizeChangedEventArgs eventArgs)

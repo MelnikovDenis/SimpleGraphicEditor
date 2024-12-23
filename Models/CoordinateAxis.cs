@@ -8,7 +8,8 @@ namespace SimpleGraphicEditor.Models;
 
 public class CoordinateAxis : VisibleLine3D
 {
-    public CoordinateAxis(Canvas targetCanvas, Brush axisBrush, Point3D firstPoint, Point3D secondPoint) : base(targetCanvas, firstPoint, secondPoint)
+    public CoordinateAxis(Canvas targetCanvas, Brush axisBrush, Point3D firstPoint, Point3D secondPoint) 
+        : base(targetCanvas, firstPoint, secondPoint)
     {
         VisibleLine.Stroke = axisBrush;
         Canvas.SetZIndex(VisibleLine, DefaultValues.AxisLineZIndex);

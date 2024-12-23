@@ -27,7 +27,7 @@ public static class DefaultValues
     public static double DefaultPointStrokeThickness { get; } = 1d;
     public static double DefualtPointDiameter { get; } = 4d;
 
-    public static Brush DefaultBindPointFillBrush { get; } = Brushes.Transparent;
+    public static Brush DefaultBindPointFillBrush { get; } = Brushes.DarkViolet;
     public static Brush DefaultBindPointStrokeBrush { get; } = new SolidColorBrush(Color.FromRgb(0, 0, 0));
     public static int DefaultBindPointZIndex { get; } = 3;
     public static double DefaultBindPointStrokeThickness { get; } = 1d;

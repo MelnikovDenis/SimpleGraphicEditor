@@ -50,7 +50,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.ChooseLineStartPoint; 
         MainViewModel.GroupViewModel.SetInvisible();
         MainViewModel.GroupViewModel.CanGrouping = false;
@@ -64,7 +64,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = false;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = true;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.SetInvisible();
         MainViewModel.GroupViewModel.CanGrouping = false;
         eventArgs.Handled = true; 
@@ -78,7 +78,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.SetInvisible();
         MainViewModel.GroupViewModel.CanGrouping = false;
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Transfer;
@@ -96,7 +96,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.Grouping; 
@@ -111,7 +111,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupTransfer; 
@@ -126,7 +126,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupRotate; 
@@ -141,7 +141,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupScale; 
@@ -155,7 +155,7 @@ public partial class MainWindow : Window
         MainViewModel.PointsViewModel.CanSelect = true;
         MainViewModel.PointsViewModel.CanFocus = true;
         MainViewModel.LinesViewModel.CanFocus = false;
-        MainViewModel.ObserverViewModel.CanDragging = false;
+        MainViewModel.ObserverViewModel.CanDragging = true;
         MainViewModel.GroupViewModel.CanGrouping = true;
         MainViewModel.GroupViewModel.SetVisible();
         MainViewModel.Status.CurrentAction = SgeStatus.Action.GroupMirror; 

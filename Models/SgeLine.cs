@@ -11,7 +11,8 @@ namespace SimpleGraphicEditor.Models;
 public class SgeLine : VisibleLine3D
 {
     private FocusController FocusController { get; set; }
-    public SgeLine(Canvas targetCanvas, FocusController focusController, Point3D firstPoint, Point3D secondPoint) : base(targetCanvas, firstPoint, secondPoint)
+    public SgeLine(Canvas targetCanvas, FocusController focusController, Point3D firstPoint, Point3D secondPoint) 
+        : base(targetCanvas, firstPoint, secondPoint)
     {
         FocusController = focusController;
         VisibleLine.MouseEnter += FocusController.MouseEnterHandler;
